@@ -350,7 +350,7 @@ async function generateDocx() {
   });
 
   imzalar.push(new Paragraph({ children: [new TextRun({ text: 'Denetlenen', bold: true, size: 20 })] }));
-  imzalar.push(new Paragraph({ children: [new TextRun({ text: denetlened, size: 20 })] }));
+  imzalar.push(new Paragraph({ children: [new TextRun({ text: denetlenen, size: 20 })] }));
 
   const doc = new Document({
     sections: [{ children: [
