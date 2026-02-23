@@ -178,8 +178,18 @@
 </div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js"></script>
 <script>
+function loadDocxLib() {
+  return new Promise((resolve, reject) => {
+    if (window.docx) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js';
+    s.onload = () => { resolve(); };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
 const CLIENT_ID = '766976946708-h3k117n7a85736ei1luh4jkmmu2slp5c.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 const FOLDER_NAME = 'Denetim Tutanakları';
@@ -254,23 +264,40 @@ function startDictation(field) {
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const targetEl = document.getElementById(field === 'konu' ? 'field-konu' : 'field-notlar');
-  let baseText = targetEl.value;
-  if (baseText && !baseText.endsWith(' ')) baseText += ' ';
+
+  // İmlecin o anki pozisyonunu al
+  let cursorPos = targetEl.selectionStart;
+  const textBefore = targetEl.value.substring(0, cursorPos);
+  const textAfter = targetEl.value.substring(cursorPos);
+  // textBefore sona boşluk ekle
+  let before = textBefore;
+  if (before.length > 0 && !before.endsWith(' ')) before += ' ';
+  let addedText = '';
 
   function makeRec() {
     const r = new SR();
     r.lang = 'tr-TR'; r.continuous = false; r.interimResults = true;
     r.onresult = (e) => {
       let interim = '';
+      let newFinal = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) baseText += e.results[i][0].transcript + ' ';
+        if (e.results[i].isFinal) newFinal += e.results[i][0].transcript + ' ';
         else interim += e.results[i][0].transcript;
       }
-      targetEl.value = baseText + interim;
+      if (newFinal) addedText += newFinal;
+      // İmleç pozisyonuna yerleştir: before + addedText + interim + after
+      targetEl.value = before + addedText + interim + (interim ? '' : textAfter);
+      // İmleci doğru yere taşı
+      const newCursor = (before + addedText + interim).length;
+      targetEl.setSelectionRange(newCursor, newCursor);
       if (targetEl.tagName === 'TEXTAREA') targetEl.scrollTop = targetEl.scrollHeight;
     };
     r.onerror = (e) => { if (e.error !== 'no-speech') stopDictation(field); };
-    r.onend = () => { if (recognitions[field]) { recognitions[field] = makeRec(); recognitions[field].start(); } };
+    r.onend = () => {
+      // after'ı kalıcı olarak ekle
+      targetEl.value = before + addedText + textAfter;
+      if (recognitions[field]) { recognitions[field] = makeRec(); recognitions[field].start(); }
+    };
     return r;
   }
 
@@ -324,6 +351,7 @@ async function getOrCreateFolder() {
 }
 
 async function generateDocx() {
+  await loadDocxLib();
   const { Document, Paragraph, TextRun, AlignmentType, Packer } = docx;
   const tarih = document.getElementById('field-tarih').value || '';
   const konu = document.getElementById('field-konu').value || '';
