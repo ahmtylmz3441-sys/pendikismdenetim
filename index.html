@@ -172,7 +172,7 @@
   </div>
 
   <div class="save-section">
-    <button class="btn-save" id="btn-save" onclick="saveToGoogleDrive()">☁️ Google Drive'a Kaydet (.docx)</button>
+    <button class="btn-save" id="btn-save" onclick="saveToGoogleDrive()">📥 Tutanağı İndir (.docx)</button>
     <div class="status-msg" id="status-msg"></div>
   </div>
 </div>
@@ -384,37 +384,39 @@ async function saveToGoogleDrive() {
   }
 
   btn.disabled = true;
-  btn.textContent = '⏳ Kaydediliyor...';
+  btn.textContent = '⏳ Hazırlanıyor...';
   status.className = 'status-msg';
 
   try {
-    const folderId = await getOrCreateFolder();
     const tarih = document.getElementById('field-tarih').value;
     const ekipBaskani = document.getElementById('field-ekipbaskani').value || 'Denetim';
     const dateStr = (tarih || new Date().toISOString().slice(0,10)).replace(/-/g,'');
     const baseName = `Tutanak_${dateStr}_${ekipBaskani.replace(/\s+/g,'_')}`;
 
+    // .docx indir
     const docxBlob = await generateDocx();
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify({ name: `${baseName}.docx`, parents: [folderId] })], { type: 'application/json' }));
-    form.append('file', docxBlob);
-    await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-      method: 'POST', headers: { Authorization: `Bearer ${accessToken}` }, body: form
-    });
+    const docxUrl = URL.createObjectURL(docxBlob);
+    const a = document.createElement('a');
+    a.href = docxUrl;
+    a.download = `${baseName}.docx`;
+    a.click();
+    URL.revokeObjectURL(docxUrl);
 
+    // Fotoğrafları tek tek indir
     for (let i = 0; i < photos.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 500)); // kısa bekleme
       const p = photos[i];
       const ext = p.file.name.split('.').pop() || 'jpg';
-      const pf = new FormData();
-      pf.append('metadata', new Blob([JSON.stringify({ name: `${baseName}_Foto${i+1}.${ext}`, parents: [folderId] })], { type: 'application/json' }));
-      pf.append('file', p.file);
-      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST', headers: { Authorization: `Bearer ${accessToken}` }, body: pf
-      });
+      const pUrl = URL.createObjectURL(p.file);
+      const pa = document.createElement('a');
+      pa.href = pUrl;
+      pa.download = `${baseName}_Foto${i+1}.${ext}`;
+      pa.click();
+      URL.revokeObjectURL(pUrl);
     }
 
     status.className = 'status-msg success';
-    status.textContent = `✅ "${baseName}.docx" Drive'a kaydedildi!`;
+    status.textContent = `✅ "${baseName}.docx" indirildi!${photos.length > 0 ? ` + ${photos.length} fotoğraf` : ''}`;
 
     setTimeout(() => {
       if (confirm('Yeni tutanak oluşturmak ister misiniz?')) {
@@ -432,7 +434,7 @@ async function saveToGoogleDrive() {
     status.textContent = '❌ Hata: ' + (err.message || 'Bilinmeyen hata');
   }
   btn.disabled = false;
-  btn.innerHTML = "☁️ Google Drive'a Kaydet (.docx)";
+  btn.innerHTML = "📥 Tutanağı İndir (.docx)";
 }
 </script>
 </body>
