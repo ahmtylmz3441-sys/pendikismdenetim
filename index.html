@@ -10,20 +10,16 @@
 <title>Pendik İSM Denetim</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#f0ede8;--surface:#fff;--border:#d4cfc8;--text:#1a1814;
-    --muted:#6b6560;--accent:#c0392b;--accent-light:#fdf0ef;
-    --accent2:#2c3e50;--success:#27ae60;--r:4px;
-    --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
-  }
+  :root{--bg:#f0ede8;--surface:#fff;--border:#d4cfc8;--text:#1a1814;--muted:#6b6560;--accent:#c0392b;--accent-light:#fdf0ef;--accent2:#2c3e50;--success:#27ae60;--r:4px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04)}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
   header{background:var(--accent2);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
   header h1{font-size:14px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
   header p{font-size:11px;opacity:.6;font-family:'IBM Plex Mono',monospace;margin-top:2px}
   .badge{background:var(--accent);font-size:11px;font-weight:600;padding:4px 10px;border-radius:2px}
-
-  /* AUTH */
+  #user-bar{display:none;align-items:center;gap:10px;padding:10px 20px;background:rgba(44,62,80,.06);border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)}
+  #user-bar span{flex:1;font-weight:500;color:var(--text)}
+  .btn-logout{background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;font-weight:500;padding:4px 8px}
   #auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:32px 24px;text-align:center}
   .auth-logo{width:72px;height:72px;background:var(--accent2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px}
   .auth-title{font-size:22px;font-weight:600;margin-bottom:6px}
@@ -33,18 +29,10 @@
   .auth-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:16px;font-family:inherit;color:var(--text);background:#fff;outline:none;letter-spacing:.05em;-webkit-appearance:none}
   .auth-input:focus{border-color:var(--accent2)}
   .auth-hint{font-size:12px;color:var(--muted);margin-top:6px;text-align:left}
-  .btn-giris{width:100%;margin-top:16px;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s}
-  .btn-giris:hover{background:#a93226}
+  .btn-giris{width:100%;margin-top:16px;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
   .btn-giris:disabled{background:var(--border);cursor:not-allowed}
   .auth-error{margin-top:12px;padding:10px 14px;background:var(--accent-light);color:var(--accent);border-radius:var(--r);font-size:13px;font-weight:500;display:none}
   .auth-error.show{display:block}
-
-  /* USER BAR */
-  #user-bar{display:none;align-items:center;gap:10px;padding:10px 20px;background:rgba(44,62,80,.06);border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)}
-  #user-bar span{flex:1;font-weight:500;color:var(--text)}
-  .btn-logout{background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;font-weight:500;padding:4px 8px}
-
-  /* APP */
   #app-screen{display:none;padding:20px;max-width:680px;margin:0 auto}
   .slabel{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:20px}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
@@ -84,14 +72,15 @@
 <body>
 
 <header>
-  <div>
-    <h1>Pendik İSM Denetim</h1>
-    <p>Pendik Kaymakamlığı · İlçe Sağlık Müdürlüğü</p>
-  </div>
+  <div><h1>Pendik İSM Denetim</h1><p>Pendik Kaymakamlığı · İlçe Sağlık Müdürlüğü</p></div>
   <div class="badge">TC</div>
 </header>
 
-<!-- GİRİŞ EKRANI -->
+<div id="user-bar">
+  <span id="user-name-bar">👤</span>
+  <button class="btn-logout" onclick="cikisYap()">Çıkış</button>
+</div>
+
 <div id="auth-screen">
   <div class="auth-logo">📋</div>
   <div class="auth-title">Hoş Geldiniz</div>
@@ -105,15 +94,7 @@
   </div>
 </div>
 
-<!-- KULLANICI BAR -->
-<div id="user-bar">
-  <span id="user-name-bar">👤</span>
-  <button class="btn-logout" onclick="cikisYap()">Çıkış</button>
-</div>
-
-<!-- ANA UYGULAMA -->
 <div id="app-screen">
-
   <div class="slabel" style="margin-top:16px">Tutanak Bilgileri</div>
   <div class="card">
     <div class="th">
@@ -167,11 +148,13 @@
 </div>
 
 <script>
-// ── CONFIG ─────────────────────────────────────
-const SHEET_ID  = '1LFAY1bP5DowgpFrblUhp4BgAqp90ZXOIAfMZ2a4WjII';
-const API_KEY   = 'AIzaSyDFYSrZUInMH-6mi8QgAcjo5rb9gl3VBmE';
-// CSV export URL - herkese açık sheets için en güvenilir yöntem
-const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+// ── YETKİLİ KULLANICILAR ────────────────────────
+// Yeni kullanıcı eklemek için: { tel: '5XXXXXXXXX', ad: 'Ad Soyad' }
+const KULLANICILAR = [
+  { tel: '5453342151', ad: 'Kübra ÖZBABALIK' },
+  { tel: '5417472345', ad: 'Ahmet YILMAZ' },
+  // Buraya yeni kullanıcı ekle
+];
 
 // ── Değişkenler ─────────────────────────────────
 let currentUser = null;
@@ -179,48 +162,19 @@ let recs = {};
 let dCount = 2;
 
 // ── GİRİŞ ──────────────────────────────────────
-async function girisYap() {
-  const btn = document.getElementById('btn-giris');
-  const errEl = document.getElementById('auth-error');
-  const tel = document.getElementById('input-tel').value.trim().replace(/\s/g,'');
-
-  if (!tel || tel.length < 10) {
-    gosterHata('Lütfen 10 haneli telefon numarası girin (başında 0 olmadan).');
+function girisYap() {
+  const tel = document.getElementById('input-tel').value.trim().replace(/\D/g,'');
+  if (tel.length !== 10) {
+    gosterHata('Lütfen 10 haneli telefon numarası girin.');
     return;
   }
-
-  btn.disabled = true;
-  btn.textContent = 'Kontrol ediliyor...';
-  errEl.classList.remove('show');
-
-  try {
-    const res = await fetch(CSV_URL);
-    if (!res.ok) throw new Error('Tablo okunamadı. (HTTP ' + res.status + ')');
-    const csv = await res.text();
-    // CSV'yi satırlara ve sütunlara ayır
-    const rows = csv.trim().split('\n').map(row =>
-      row.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''))
-    );
-
-    const telNorm = tel.replace(/^0+/, '');
-    const found = rows.slice(1).find(row => {
-      const numara = (row[0]||'').toString().trim().replace(/\s/g,'').replace(/^0+/, '');
-      const yetki  = (row[2]||'').toString().trim().toLowerCase();
-      return numara === telNorm && yetki === 'aktif';
-    });
-
-    if (found) {
-      currentUser = { tel, ad: found[1] || tel };
-      uygulamaGoster();
-    } else {
-      gosterHata('Bu numara yetkili değil veya sistemde kayıtlı değil.');
-    }
-  } catch(e) {
-    gosterHata('Bağlantı hatası: ' + e.message);
+  const found = KULLANICILAR.find(k => k.tel === tel);
+  if (found) {
+    currentUser = found;
+    uygulamaGoster();
+  } else {
+    gosterHata('Bu numara yetkili değil veya sistemde kayıtlı değil.');
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Giriş Yap';
 }
 
 function gosterHata(msg) {
@@ -246,7 +200,6 @@ function cikisYap() {
   document.getElementById('auth-error').classList.remove('show');
 }
 
-// Enter tuşuyla giriş
 document.getElementById('input-tel').addEventListener('keydown', e => {
   if (e.key === 'Enter') girisYap();
 });
@@ -282,9 +235,8 @@ function getDenetciler() {
 function startDic(field) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { alert('Lütfen Chrome kullanın.'); return; }
-
   const el = document.getElementById(field === 'konu' ? 'f-konu' : 'f-notlar');
-  const curPos = (typeof el.selectionStart === 'number') ? el.selectionStart : el.value.length;
+  const curPos = typeof el.selectionStart === 'number' ? el.selectionStart : el.value.length;
   let before = el.value.substring(0, curPos);
   const after = el.value.substring(curPos);
   if (before.length > 0 && !before.endsWith(' ') && !before.endsWith('\n')) before += ' ';
@@ -301,7 +253,7 @@ function startDic(field) {
       }
       el.value = before + added + interim + (interim ? '' : after);
       const cur = (before + added + interim).length;
-      try { el.setSelectionRange(cur, cur); } catch(e){}
+      try { el.setSelectionRange(cur, cur); } catch(e) {}
       if (el.tagName === 'TEXTAREA') el.scrollTop = el.scrollHeight;
     };
     r.onerror = (e) => { if (e.error !== 'no-speech') stopDic(field); };
@@ -326,7 +278,78 @@ function stopDic(field) {
   document.getElementById(`ri-${field}`).classList.remove('on');
 }
 
-// ── DOCX İNDİR ─────────────────────────────────
+// ── DOCX OLUŞTUR (dış kütüphane yok) ────────────
+// Minimal OOXML/docx oluşturucu
+function metinSatir(metin, bold=false, center=false, size=24) {
+  const alignment = center ? `<w:jc w:val="center"/>` : '';
+  const boldTag = bold ? '<w:b/>' : '';
+  return `<w:p><w:pPr>${alignment}</w:pPr><w:r><w:rPr>${boldTag}<w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr><w:t xml:space="preserve">${xmlEscape(metin)}</w:t></w:r></w:p>`;
+}
+
+function xmlEscape(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
+  const satirlar = [
+    metinSatir('T.C.', true, true, 28),
+    metinSatir('PENDİK KAYMAKAMLIĞI', true, true, 28),
+    metinSatir('İlçe Sağlık Müdürlüğü', false, true, 24),
+    metinSatir('', false, false, 24),
+    metinSatir('DENETİM TUTANAĞI', true, true, 32),
+    metinSatir('', false, false, 24),
+    metinSatir(`Tarih: ${tarih}`, false, false, 24),
+    metinSatir(`Konu: ${konu}`, false, false, 24),
+    metinSatir('', false, false, 24),
+    metinSatir('DENETİM NOTLARI:', true, false, 24),
+    metinSatir('', false, false, 24),
+  ];
+
+  notlar.split('\n').forEach(satir => {
+    satirlar.push(metinSatir(satir || ' ', false, false, 24));
+  });
+
+  satirlar.push(metinSatir('', false, false, 24));
+  satirlar.push(metinSatir('', false, false, 24));
+  satirlar.push(metinSatir('', false, false, 24));
+  satirlar.push(metinSatir('Denetim Ekip Başkanı', true, false, 22));
+  satirlar.push(metinSatir(baskani, false, false, 22));
+  satirlar.push(metinSatir('', false, false, 22));
+
+  denetciler.forEach((d, i) => {
+    satirlar.push(metinSatir(`Denetçi ${i+1}`, true, false, 22));
+    satirlar.push(metinSatir(d, false, false, 22));
+    satirlar.push(metinSatir('', false, false, 22));
+  });
+
+  satirlar.push(metinSatir('Denetlenen', true, false, 22));
+  satirlar.push(metinSatir(denetlenen, false, false, 22));
+
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>${satirlar.join('')}<w:sectPr/></w:body>
+</w:document>`;
+
+  const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const wordRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+</Relationships>`;
+
+  const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+
+  return { documentXml, relsXml, wordRelsXml, contentTypesXml };
+}
+
+// ── ZIP OLUŞTUR (JSZip yükle) ────────────────────
 async function kaydet() {
   const btn = document.getElementById('btn-save');
   const st  = document.getElementById('status');
@@ -343,15 +366,15 @@ async function kaydet() {
   st.className = 'status';
 
   try {
+    // JSZip yükle - docx aslında bir ZIP dosyasıdır
     await new Promise((res, rej) => {
-      if (window.docx) { res(); return; }
+      if (window.JSZip) { res(); return; }
       const s = document.createElement('script');
-      s.src = 'https://unpkg.com/docx@7.8.2/build/index.umd.js';
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
       s.onload = res; s.onerror = rej;
       document.head.appendChild(s);
     });
 
-    const { Document, Paragraph, TextRun, AlignmentType, Packer } = docx;
     const tarih      = document.getElementById('f-tarih').value || '';
     const konu       = document.getElementById('f-konu').value || '';
     const baskani    = document.getElementById('f-baskani').value || '';
@@ -359,39 +382,19 @@ async function kaydet() {
     const denetciler = getDenetciler();
     const tarihStr   = tarih ? new Date(tarih).toLocaleDateString('tr-TR') : '';
 
-    const p  = (text, opts={}) => new Paragraph({ children:[new TextRun({text, size:22, bold:opts.bold||false})] });
-    const pc = (text, opts={}) => new Paragraph({ alignment:AlignmentType.CENTER, children:[new TextRun({text, size:opts.size||22, bold:opts.bold||false})] });
+    const { documentXml, relsXml, wordRelsXml, contentTypesXml } = docxOlustur(
+      tarihStr, konu, baskani, denetciler, denetlenen,
+      document.getElementById('f-notlar').value
+    );
 
-    const notlarRows = document.getElementById('f-notlar').value.split('\n').map(line => p(line));
+    const zip = new JSZip();
+    zip.file('[Content_Types].xml', contentTypesXml);
+    zip.file('_rels/.rels', relsXml);
+    zip.file('word/document.xml', documentXml);
+    zip.file('word/_rels/document.xml.rels', wordRelsXml);
 
-    const imzalar = [p(''), p(''), p(''),
-      p('Denetim Ekip Başkanı', {bold:true}), p(baskani), p('')
-    ];
-    denetciler.forEach((d,i) => {
-      imzalar.push(p(`Denetçi ${i+1}`, {bold:true}));
-      imzalar.push(p(d));
-      imzalar.push(p(''));
-    });
-    imzalar.push(p('Denetlenen', {bold:true}));
-    imzalar.push(p(denetlenen));
+    const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
 
-    const doc = new Document({ sections:[{ children:[
-      pc('T.C.', {bold:true, size:24}),
-      pc('PENDİK KAYMAKAMLIĞI', {bold:true, size:24}),
-      pc('İlçe Sağlık Müdürlüğü', {size:24}),
-      p(''),
-      pc('DENETİM TUTANAĞI', {bold:true, size:28}),
-      p(''),
-      p(`Tarih: ${tarihStr}`),
-      p(`Konu: ${konu}`),
-      p(''),
-      p('DENETİM NOTLARI:', {bold:true}),
-      p(''),
-      ...notlarRows,
-      ...imzalar,
-    ]}]});
-
-    const blob = await Packer.toBlob(doc);
     const dateStr  = (tarih||new Date().toISOString().slice(0,10)).replace(/-/g,'');
     const baseName = `Tutanak_${dateStr}_${(baskani||'Denetim').replace(/\s+/g,'_')}`;
     const url = URL.createObjectURL(blob);
@@ -410,7 +413,7 @@ async function kaydet() {
           const el = document.getElementById(id);
           if (el) el.value = '';
         });
-        document.querySelectorAll('#denetci-list input').forEach(i=>i.value='');
+        document.querySelectorAll('#denetci-list input').forEach(i => i.value = '');
         document.getElementById('f-tarih').value = new Date().toISOString().split('T')[0];
         st.className = 'status';
       }
