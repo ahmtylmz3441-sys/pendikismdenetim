@@ -6,463 +6,420 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Denetim">
-<title>Denetim Tutanağı</title>
+<meta name="apple-mobile-web-app-title" content="PendikISM Denetim">
+<title>Pendik İSM Denetim</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f0ede8; --surface: #ffffff; --border: #d4cfc8; --text: #1a1814;
-    --text-muted: #6b6560; --accent: #c0392b; --accent-light: #fdf0ef;
-    --accent2: #2c3e50; --success: #27ae60; --radius: 4px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+    --bg:#f0ede8;--surface:#fff;--border:#d4cfc8;--text:#1a1814;
+    --muted:#6b6560;--accent:#c0392b;--accent-light:#fdf0ef;
+    --accent2:#2c3e50;--success:#27ae60;--r:4px;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  header { background: var(--accent2); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-  header .title-block h1 { font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
-  header .title-block p { font-size: 11px; opacity: 0.6; font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
-  .header-badge { background: var(--accent); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 2px; }
-  #auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 56px); padding: 32px 24px; text-align: center; }
-  .auth-logo { width: 64px; height: 64px; background: var(--accent2); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 28px; }
-  .auth-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
-  .auth-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6; }
-  .btn-google { display: flex; align-items: center; gap: 12px; background: white; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 24px; font-size: 15px; font-weight: 500; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; box-shadow: var(--shadow); }
-  .btn-google svg { width: 20px; height: 20px; flex-shrink: 0; }
-  #app-screen { display: none; padding: 20px; max-width: 680px; margin: 0 auto; }
-  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; margin-top: 20px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); margin-bottom: 12px; }
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .field-group { display: flex; flex-direction: column; gap: 4px; }
-  .field-group label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-  input[type="text"], input[type="date"], textarea { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; color: var(--text); background: white; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
-  input:focus, textarea:focus { border-color: var(--accent2); }
-  textarea { resize: none; min-height: 180px; line-height: 1.7; font-size: 15px; }
-  .mic-row { display: flex; gap: 10px; margin-top: 10px; }
-  .btn-mic { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; flex: 1; justify-content: center; }
-  .btn-mic-start { background: var(--accent2); color: white; }
-  .btn-mic-stop { background: var(--accent); color: white; display: none; }
-  .btn-clear { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 12px 16px; border-radius: var(--radius); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; cursor: pointer; }
-  .recording-indicator { display: none; align-items: center; gap: 8px; font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 8px; padding: 8px 12px; background: var(--accent-light); border-radius: var(--radius); }
-  .recording-indicator.active { display: flex; }
-  .pulse-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 1s infinite; flex-shrink: 0; }
-  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  header{background:var(--accent2);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  header h1{font-size:14px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  header p{font-size:11px;opacity:.6;font-family:'IBM Plex Mono',monospace;margin-top:2px}
+  .badge{background:var(--accent);font-size:11px;font-weight:600;padding:4px 10px;border-radius:2px}
 
-  .imza-sub-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 12px 0 8px; }
-  .imza-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .imza-item label { font-size: 12px; font-weight: 500; color: var(--text-muted); white-space: nowrap; min-width: 110px; }
-  .imza-item input { flex: 1; }
-  .btn-remove-denetci { background: none; border: none; color: var(--accent); font-size: 20px; cursor: pointer; padding: 2px 8px; line-height: 1; flex-shrink: 0; }
-  .btn-add-denetci { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: transparent; border: 1.5px dashed var(--border); border-radius: var(--radius); color: var(--text-muted); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; cursor: pointer; width: 100%; justify-content: center; margin-top: 4px; }
-  .btn-add-denetci:hover { border-color: var(--accent2); color: var(--accent2); }
+  /* AUTH */
+  #auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:32px 24px;text-align:center}
+  .auth-logo{width:72px;height:72px;background:var(--accent2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px}
+  .auth-title{font-size:22px;font-weight:600;margin-bottom:6px}
+  .auth-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+  .auth-box{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;width:100%;max-width:340px;box-shadow:var(--shadow)}
+  .auth-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;text-align:left}
+  .auth-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:16px;font-family:inherit;color:var(--text);background:#fff;outline:none;letter-spacing:.05em;-webkit-appearance:none}
+  .auth-input:focus{border-color:var(--accent2)}
+  .auth-hint{font-size:12px;color:var(--muted);margin-top:6px;text-align:left}
+  .btn-giris{width:100%;margin-top:16px;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s}
+  .btn-giris:hover{background:#a93226}
+  .btn-giris:disabled{background:var(--border);cursor:not-allowed}
+  .auth-error{margin-top:12px;padding:10px 14px;background:var(--accent-light);color:var(--accent);border-radius:var(--r);font-size:13px;font-weight:500;display:none}
+  .auth-error.show{display:block}
 
-  .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .photo-thumb { aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; position: relative; border: 1px solid var(--border); }
-  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .photo-thumb .remove-photo { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .btn-add-photo { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: transparent; border: 1.5px dashed var(--border); border-radius: var(--radius); color: var(--text-muted); font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; cursor: pointer; width: 100%; justify-content: center; margin-top: 10px; }
-  .btn-add-photo:hover { border-color: var(--accent2); color: var(--accent2); }
+  /* USER BAR */
+  #user-bar{display:none;align-items:center;gap:10px;padding:10px 20px;background:rgba(44,62,80,.06);border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)}
+  #user-bar span{flex:1;font-weight:500;color:var(--text)}
+  .btn-logout{background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;font-weight:500;padding:4px 8px}
 
-  .save-section { padding: 20px 0 40px; }
-  .btn-save { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .btn-save:disabled { background: var(--border); cursor: not-allowed; }
-  .status-msg { display: none; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; text-align: center; }
-  .status-msg.success { background: #eafaf1; color: var(--success); border: 1px solid #a9dfbf; display: block; }
-  .status-msg.error { background: var(--accent-light); color: var(--accent); border: 1px solid #f5b7b1; display: block; }
-  .tutanak-header { text-align: center; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-  .tutanak-header .kurum { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
-  .tutanak-header .baslik { font-size: 16px; font-weight: 600; letter-spacing: 0.1em; margin-top: 6px; }
-  #user-bar { display: none; align-items: center; gap: 10px; padding: 10px 20px; background: rgba(44,62,80,0.06); border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
-  #user-bar img { width: 28px; height: 28px; border-radius: 50%; }
-  #user-bar span { flex: 1; }
-  .btn-logout { background: none; border: none; font-size: 12px; color: var(--accent); cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-weight: 500; }
+  /* APP */
+  #app-screen{display:none;padding:20px;max-width:680px;margin:0 auto}
+  .slabel{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:20px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .fg{display:flex;flex-direction:column;gap:4px}
+  .fg label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  input[type=text],input[type=date],textarea{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:14px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .15s;-webkit-appearance:none}
+  input:focus,textarea:focus{border-color:var(--accent2)}
+  textarea{resize:none;min-height:200px;line-height:1.7;font-size:15px}
+  .mic-row{display:flex;gap:10px;margin-top:10px}
+  .btn-mic{display:flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:var(--r);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;flex:1;justify-content:center}
+  .btn-start{background:var(--accent2);color:#fff}
+  .btn-stop{background:var(--accent);color:#fff;display:none}
+  .btn-clear{background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px 16px;border-radius:var(--r);font-family:inherit;font-size:13px;cursor:pointer}
+  .rec-ind{display:none;align-items:center;gap:8px;font-size:13px;color:var(--accent);font-weight:500;margin-top:8px;padding:8px 12px;background:var(--accent-light);border-radius:var(--r)}
+  .rec-ind.on{display:flex}
+  .dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 1s infinite;flex-shrink:0}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  .sub-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 0 8px}
+  .imza-item{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .imza-item label{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap;min-width:110px}
+  .imza-item input{flex:1}
+  .btn-rm{background:none;border:none;color:var(--accent);font-size:20px;cursor:pointer;padding:2px 8px;line-height:1;flex-shrink:0}
+  .btn-add{display:flex;align-items:center;gap:6px;padding:10px 14px;background:transparent;border:1.5px dashed var(--border);border-radius:var(--r);color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;width:100%;justify-content:center;margin-top:4px}
+  .btn-add:hover{border-color:var(--accent2);color:var(--accent2)}
+  .save-sec{padding:20px 0 40px}
+  .btn-save{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+  .btn-save:disabled{background:var(--border);cursor:not-allowed}
+  .status{display:none;margin-top:12px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500;text-align:center}
+  .status.ok{background:#eafaf1;color:var(--success);border:1px solid #a9dfbf;display:block}
+  .status.err{background:var(--accent-light);color:var(--accent);border:1px solid #f5b7b1;display:block}
+  .th{text-align:center;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px}
+  .th .kurum{font-size:12px;color:var(--muted);line-height:1.6}
+  .th .baslik{font-size:16px;font-weight:600;letter-spacing:.1em;margin-top:6px}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="title-block">
-    <h1>Denetim Tutanağı</h1>
+  <div>
+    <h1>Pendik İSM Denetim</h1>
     <p>Pendik Kaymakamlığı · İlçe Sağlık Müdürlüğü</p>
   </div>
-  <div class="header-badge">TC</div>
+  <div class="badge">TC</div>
 </header>
 
-<div id="user-bar">
-  <img id="user-photo" src="" alt="">
-  <span id="user-name"></span>
-  <button class="btn-logout" onclick="signOut()">Çıkış</button>
-</div>
-
+<!-- GİRİŞ EKRANI -->
 <div id="auth-screen">
   <div class="auth-logo">📋</div>
   <div class="auth-title">Hoş Geldiniz</div>
-  <div class="auth-sub">Uygulamaya erişmek için<br>Google hesabınızla giriş yapın.</div>
-  <button class="btn-google" onclick="signIn()">
-    <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-    Google ile Giriş Yap
-  </button>
+  <div class="auth-sub">Sisteme erişmek için<br>kayıtlı telefon numaranızı girin.</div>
+  <div class="auth-box">
+    <label class="auth-label">Telefon Numarası</label>
+    <input class="auth-input" id="input-tel" type="tel" placeholder="05XXXXXXXXX" maxlength="11" inputmode="numeric">
+    <div class="auth-hint">Başında 0 ile 11 haneli giriniz</div>
+    <button class="btn-giris" id="btn-giris" onclick="girisYap()">Giriş Yap</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
 </div>
 
+<!-- KULLANICI BAR -->
+<div id="user-bar">
+  <span id="user-name-bar">👤</span>
+  <button class="btn-logout" onclick="cikisYap()">Çıkış</button>
+</div>
+
+<!-- ANA UYGULAMA -->
 <div id="app-screen">
-  <div class="section-label" style="margin-top:16px;">Tutanak Bilgileri</div>
+
+  <div class="slabel" style="margin-top:16px">Tutanak Bilgileri</div>
   <div class="card">
-    <div class="tutanak-header">
+    <div class="th">
       <div class="kurum">T.C. PENDİK KAYMAKAMLIĞI<br>İlçe Sağlık Müdürlüğü</div>
       <div class="baslik">DENETİM TUTANAĞI</div>
     </div>
-    <div class="info-grid">
-      <div class="field-group">
-        <label>Tarih</label>
-        <input type="date" id="field-tarih">
-      </div>
-      <div class="field-group">
-        <label>Denetlenen</label>
-        <input type="text" id="field-denetlenen" placeholder="Ad Soyad / Kurum">
-      </div>
+    <div class="grid2">
+      <div class="fg"><label>Tarih</label><input type="date" id="f-tarih"></div>
+      <div class="fg"><label>Denetlenen</label><input type="text" id="f-denetlenen" placeholder="Ad Soyad / Kurum"></div>
     </div>
-    <div class="field-group" style="margin-top:12px;">
+    <div class="fg" style="margin-top:12px">
       <label>Konu</label>
-      <input type="text" id="field-konu" placeholder="🎤 Mikrofon ile veya yazarak girin">
+      <input type="text" id="f-konu" placeholder="Sesle veya yazarak girin">
       <div class="mic-row">
-        <button class="btn-mic btn-mic-start" id="mic-konu-start" onclick="startDictation('konu')">🎤 Sesle Gir</button>
-        <button class="btn-mic btn-mic-stop" id="mic-konu-stop" onclick="stopDictation('konu')">⏹ Durdur</button>
+        <button class="btn-mic btn-start" id="ms-konu" onclick="startDic('konu')">🎤 Sesle Gir</button>
+        <button class="btn-mic btn-stop" id="mp-konu" onclick="stopDic('konu')">⏹ Durdur</button>
       </div>
-      <div class="recording-indicator" id="rec-konu"><div class="pulse-dot"></div>Konu dinleniyor...</div>
+      <div class="rec-ind" id="ri-konu"><div class="dot"></div>Konu dinleniyor...</div>
     </div>
   </div>
 
-  <div class="section-label">İmza Bilgileri</div>
+  <div class="slabel">İmza Bilgileri</div>
   <div class="card">
     <div class="imza-item">
       <label>Ekip Başkanı</label>
-      <input type="text" id="field-ekipbaskani" placeholder="Ad Soyad">
+      <input type="text" id="f-baskani" placeholder="Ad Soyad">
     </div>
-
-    <div class="imza-sub-label">Denetçiler</div>
-    <div id="denetci-listesi">
-      <div class="imza-item" id="denetci-0">
-        <label>Denetçi 1</label>
-        <input type="text" placeholder="Ad Soyad">
-      </div>
-      <div class="imza-item" id="denetci-1">
-        <label>Denetçi 2</label>
-        <input type="text" placeholder="Ad Soyad">
-        <button class="btn-remove-denetci" onclick="removeDenetci(1)">×</button>
-      </div>
+    <div class="sub-label">Denetçiler</div>
+    <div id="denetci-list">
+      <div class="imza-item" id="d-0"><label>Denetçi 1</label><input type="text" placeholder="Ad Soyad"></div>
+      <div class="imza-item" id="d-1"><label>Denetçi 2</label><input type="text" placeholder="Ad Soyad"><button class="btn-rm" onclick="rmDenetci(1)">×</button></div>
     </div>
-    <button class="btn-add-denetci" id="btn-add-denetci" onclick="addDenetci()">+ Denetçi Ekle (max 5)</button>
+    <button class="btn-add" id="btn-add-d" onclick="addDenetci()">+ Denetçi Ekle (max 5)</button>
   </div>
 
-  <div class="section-label">Denetim Notları</div>
+  <div class="slabel">Denetim Notları</div>
   <div class="card">
-    <textarea id="field-notlar" placeholder="🎤 Mikrofon butonuna basın ve konuşun — metniniz burada belirecek. İstediğiniz yere dokunarak düzeltme yapabilirsiniz."></textarea>
+    <textarea id="f-notlar" placeholder="🎤 Mikrofon butonuna basın ve konuşun. İmleci istediğiniz yere alarak o noktadan dikte yapabilirsiniz."></textarea>
     <div class="mic-row">
-      <button class="btn-mic btn-mic-start" id="mic-notlar-start" onclick="startDictation('notlar')">🎤 Dikte Başlat</button>
-      <button class="btn-mic btn-mic-stop" id="mic-notlar-stop" onclick="stopDictation('notlar')">⏹ Durdur</button>
-      <button class="btn-clear" onclick="clearField('notlar')">Temizle</button>
+      <button class="btn-mic btn-start" id="ms-notlar" onclick="startDic('notlar')">🎤 Dikte Başlat</button>
+      <button class="btn-mic btn-stop" id="mp-notlar" onclick="stopDic('notlar')">⏹ Durdur</button>
+      <button class="btn-clear" onclick="document.getElementById('f-notlar').value=''">Temizle</button>
     </div>
-    <div class="recording-indicator" id="rec-notlar"><div class="pulse-dot"></div>Dinleniyor — konuşabilirsiniz...</div>
+    <div class="rec-ind" id="ri-notlar"><div class="dot"></div>Dinleniyor — konuşabilirsiniz...</div>
   </div>
 
-  <div class="section-label">Fotoğraflar</div>
-  <div class="card">
-    <div class="photo-grid" id="photo-grid"></div>
-    <input type="file" id="photo-input" accept="image/*" multiple capture="environment" style="display:none" onchange="addPhotos(event)">
-    <button class="btn-add-photo" onclick="document.getElementById('photo-input').click()">📷 Fotoğraf Ekle</button>
-  </div>
-
-  <div class="save-section">
-    <button class="btn-save" id="btn-save" onclick="saveToGoogleDrive()">📥 Tutanağı İndir (.docx)</button>
-    <div class="status-msg" id="status-msg"></div>
+  <div class="save-sec">
+    <button class="btn-save" id="btn-save" onclick="kaydet()">📥 Tutanağı İndir (.docx)</button>
+    <div class="status" id="status"></div>
   </div>
 </div>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
-function loadDocxLib() {
-  return new Promise((resolve, reject) => {
-    if (window.docx) { resolve(); return; }
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js';
-    s.onload = () => { resolve(); };
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-}
+// ── CONFIG ─────────────────────────────────────
+const SHEET_ID  = '1LFAY1bP5DowgpFrblUhp4BgAqp90ZXOIAfMZ2a4WjII';
+const API_KEY   = 'AIzaSyDFYSrZUInMH-6mi8QgAcjo5rb9gl3VBmE';
+const SHEET_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A:C?key=${API_KEY}`;
 
-const CLIENT_ID = '766976946708-h3k117n7a85736ei1luh4jkmmu2slp5c.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-const FOLDER_NAME = 'Denetim Tutanakları';
-let accessToken = null;
-let photos = [];
-let recognitions = {};
-let denetciCount = 2;
+// ── Değişkenler ─────────────────────────────────
+let currentUser = null;
+let recs = {};
+let dCount = 2;
 
-// DENETÇI
-function addDenetci() {
-  if (denetciCount >= 5) return;
-  const liste = document.getElementById('denetci-listesi');
-  const div = document.createElement('div');
-  div.className = 'imza-item';
-  div.id = `denetci-${denetciCount}`;
-  div.innerHTML = `<label>Denetçi ${denetciCount + 1}</label><input type="text" placeholder="Ad Soyad"><button class="btn-remove-denetci" onclick="removeDenetci(${denetciCount})">×</button>`;
-  liste.appendChild(div);
-  denetciCount++;
-  if (denetciCount >= 5) document.getElementById('btn-add-denetci').style.opacity = '0.4';
-}
+// ── GİRİŞ ──────────────────────────────────────
+async function girisYap() {
+  const btn = document.getElementById('btn-giris');
+  const errEl = document.getElementById('auth-error');
+  const tel = document.getElementById('input-tel').value.trim().replace(/\s/g,'');
 
-function removeDenetci(index) {
-  const el = document.getElementById(`denetci-${index}`);
-  if (el) el.remove();
-  denetciCount--;
-  document.getElementById('btn-add-denetci').style.opacity = '1';
-  const items = document.querySelectorAll('#denetci-listesi .imza-item');
-  items.forEach((item, i) => {
-    item.id = `denetci-${i}`;
-    item.querySelector('label').textContent = `Denetçi ${i + 1}`;
-    const btn = item.querySelector('.btn-remove-denetci');
-    if (btn) btn.setAttribute('onclick', `removeDenetci(${i})`);
-  });
-}
+  if (!tel || tel.length < 10) {
+    gosterHata('Lütfen geçerli bir telefon numarası girin.');
+    return;
+  }
 
-function getDenetciler() {
-  return Array.from(document.querySelectorAll('#denetci-listesi input')).map(i => i.value.trim()).filter(v => v);
-}
+  btn.disabled = true;
+  btn.textContent = 'Kontrol ediliyor...';
+  errEl.classList.remove('show');
 
-// AUTH
-function signIn() {
-  const client = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID, scope: SCOPES,
-    callback: (r) => {
-      if (r.error) { alert('Giriş başarısız: ' + r.error); return; }
-      accessToken = r.access_token;
-      fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then(r => r.json()).then(info => {
-          document.getElementById('user-name').textContent = info.name || info.email;
-          document.getElementById('user-photo').src = info.picture || '';
-        });
-      document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('app-screen').style.display = 'block';
-      document.getElementById('user-bar').style.display = 'flex';
-      document.getElementById('field-tarih').value = new Date().toISOString().split('T')[0];
+  try {
+    const res = await fetch(SHEET_URL);
+    if (!res.ok) throw new Error('Tablo okunamadı.');
+    const data = await res.json();
+    const rows = data.values || [];
+
+    // Başlık satırını atla (1. satır), numarayı ara
+    const found = rows.slice(1).find(row => {
+      const numara = (row[0]||'').toString().trim().replace(/\s/g,'');
+      const yetki  = (row[2]||'').toString().trim().toLowerCase();
+      return numara === tel && yetki === 'aktif';
+    });
+
+    if (found) {
+      currentUser = { tel, ad: found[1] || tel };
+      uygulamaGoster();
+    } else {
+      gosterHata('Bu numara yetkili değil veya sistemde kayıtlı değil.');
     }
-  });
-  client.requestAccessToken();
+  } catch(e) {
+    gosterHata('Bağlantı hatası: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Giriş Yap';
 }
 
-function signOut() {
-  accessToken = null;
+function gosterHata(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function uygulamaGoster() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('user-bar').style.display = 'flex';
+  document.getElementById('user-name-bar').textContent = '👤 ' + currentUser.ad;
+  document.getElementById('f-tarih').value = new Date().toISOString().split('T')[0];
+}
+
+function cikisYap() {
+  currentUser = null;
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('user-bar').style.display = 'none';
+  document.getElementById('input-tel').value = '';
+  document.getElementById('auth-error').classList.remove('show');
 }
 
-// SPEECH
-function startDictation(field) {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Lütfen Chrome kullanın.'); return;
-  }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const targetEl = document.getElementById(field === 'konu' ? 'field-konu' : 'field-notlar');
+// Enter tuşuyla giriş
+document.getElementById('input-tel').addEventListener('keydown', e => {
+  if (e.key === 'Enter') girisYap();
+});
 
-  // İmlecin o anki pozisyonunu al
-  let cursorPos = targetEl.selectionStart;
-  const textBefore = targetEl.value.substring(0, cursorPos);
-  const textAfter = targetEl.value.substring(cursorPos);
-  // textBefore sona boşluk ekle
-  let before = textBefore;
-  if (before.length > 0 && !before.endsWith(' ')) before += ' ';
-  let addedText = '';
+// ── DENETÇI ────────────────────────────────────
+function addDenetci() {
+  if (dCount >= 5) return;
+  const list = document.getElementById('denetci-list');
+  const d = document.createElement('div');
+  d.className = 'imza-item'; d.id = `d-${dCount}`;
+  d.innerHTML = `<label>Denetçi ${dCount+1}</label><input type="text" placeholder="Ad Soyad"><button class="btn-rm" onclick="rmDenetci(${dCount})">×</button>`;
+  list.appendChild(d);
+  dCount++;
+  if (dCount >= 5) document.getElementById('btn-add-d').style.opacity = '.4';
+}
+function rmDenetci(i) {
+  const el = document.getElementById(`d-${i}`);
+  if (el) el.remove();
+  dCount--;
+  document.getElementById('btn-add-d').style.opacity = '1';
+  document.querySelectorAll('#denetci-list .imza-item').forEach((el,j) => {
+    el.id = `d-${j}`;
+    el.querySelector('label').textContent = `Denetçi ${j+1}`;
+    const b = el.querySelector('.btn-rm');
+    if (b) b.setAttribute('onclick', `rmDenetci(${j})`);
+  });
+}
+function getDenetciler() {
+  return [...document.querySelectorAll('#denetci-list input')].map(i=>i.value.trim()).filter(Boolean);
+}
+
+// ── SES TANIMA ──────────────────────────────────
+function startDic(field) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Lütfen Chrome kullanın.'); return; }
+
+  const el = document.getElementById(field === 'konu' ? 'f-konu' : 'f-notlar');
+  const curPos = (typeof el.selectionStart === 'number') ? el.selectionStart : el.value.length;
+  let before = el.value.substring(0, curPos);
+  const after = el.value.substring(curPos);
+  if (before.length > 0 && !before.endsWith(' ') && !before.endsWith('\n')) before += ' ';
+  let added = '';
 
   function makeRec() {
     const r = new SR();
     r.lang = 'tr-TR'; r.continuous = false; r.interimResults = true;
     r.onresult = (e) => {
       let interim = '';
-      let newFinal = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) newFinal += e.results[i][0].transcript + ' ';
+        if (e.results[i].isFinal) added += e.results[i][0].transcript + ' ';
         else interim += e.results[i][0].transcript;
       }
-      if (newFinal) addedText += newFinal;
-      // İmleç pozisyonuna yerleştir: before + addedText + interim + after
-      targetEl.value = before + addedText + interim + (interim ? '' : textAfter);
-      // İmleci doğru yere taşı
-      const newCursor = (before + addedText + interim).length;
-      targetEl.setSelectionRange(newCursor, newCursor);
-      if (targetEl.tagName === 'TEXTAREA') targetEl.scrollTop = targetEl.scrollHeight;
+      el.value = before + added + interim + (interim ? '' : after);
+      const cur = (before + added + interim).length;
+      try { el.setSelectionRange(cur, cur); } catch(e){}
+      if (el.tagName === 'TEXTAREA') el.scrollTop = el.scrollHeight;
     };
-    r.onerror = (e) => { if (e.error !== 'no-speech') stopDictation(field); };
+    r.onerror = (e) => { if (e.error !== 'no-speech') stopDic(field); };
     r.onend = () => {
-      // after'ı kalıcı olarak ekle
-      targetEl.value = before + addedText + textAfter;
-      if (recognitions[field]) { recognitions[field] = makeRec(); recognitions[field].start(); }
+      el.value = before + added + after;
+      if (recs[field]) { recs[field] = makeRec(); recs[field].start(); }
     };
     return r;
   }
 
-  recognitions[field] = makeRec();
-  recognitions[field].start();
-  document.getElementById(`mic-${field}-start`).style.display = 'none';
-  document.getElementById(`mic-${field}-stop`).style.display = 'flex';
-  document.getElementById(`rec-${field}`).classList.add('active');
+  recs[field] = makeRec();
+  recs[field].start();
+  document.getElementById(`ms-${field}`).style.display = 'none';
+  document.getElementById(`mp-${field}`).style.display = 'flex';
+  document.getElementById(`ri-${field}`).classList.add('on');
 }
 
-function stopDictation(field) {
-  if (recognitions[field]) { recognitions[field].stop(); recognitions[field] = null; }
-  document.getElementById(`mic-${field}-start`).style.display = 'flex';
-  document.getElementById(`mic-${field}-stop`).style.display = 'none';
-  document.getElementById(`rec-${field}`).classList.remove('active');
+function stopDic(field) {
+  if (recs[field]) { recs[field].stop(); recs[field] = null; }
+  document.getElementById(`ms-${field}`).style.display = 'flex';
+  document.getElementById(`mp-${field}`).style.display = 'none';
+  document.getElementById(`ri-${field}`).classList.remove('on');
 }
 
-function clearField(field) { document.getElementById('field-' + field).value = ''; }
-
-// PHOTOS
-function addPhotos(e) {
-  Array.from(e.target.files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (ev) => { photos.push({ file, dataUrl: ev.target.result }); renderPhotos(); };
-    reader.readAsDataURL(file);
-  });
-  e.target.value = '';
-}
-function renderPhotos() {
-  const grid = document.getElementById('photo-grid');
-  grid.innerHTML = '';
-  photos.forEach((p, i) => {
-    const div = document.createElement('div');
-    div.className = 'photo-thumb';
-    div.innerHTML = `<img src="${p.dataUrl}"><button class="remove-photo" onclick="removePhoto(${i})">×</button>`;
-    grid.appendChild(div);
-  });
-}
-function removePhoto(i) { photos.splice(i, 1); renderPhotos(); }
-
-// DRIVE
-async function getOrCreateFolder() {
-  const s = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  const d = await s.json();
-  if (d.files && d.files.length > 0) return d.files[0].id;
-  const c = await fetch('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' })
-  });
-  return (await c.json()).id;
-}
-
-async function generateDocx() {
-  await loadDocxLib();
-  const { Document, Paragraph, TextRun, AlignmentType, Packer } = docx;
-  const tarih = document.getElementById('field-tarih').value || '';
-  const konu = document.getElementById('field-konu').value || '';
-  const notlar = document.getElementById('field-notlar').value || '';
-  const ekipBaskani = document.getElementById('field-ekipbaskani').value || '';
-  const denetlenen = document.getElementById('field-denetlenen').value || '';
-  const denetciler = getDenetciler();
-  const tarihFormatted = tarih ? new Date(tarih).toLocaleDateString('tr-TR') : '';
-
-  const notlarParagrafs = notlar.split('\n').map(line => new Paragraph({ children: [new TextRun({ text: line, size: 22 })] }));
-
-  // İmza bölümü
-  const imzalar = [
-    new Paragraph({ text: '' }), new Paragraph({ text: '' }), new Paragraph({ text: '' }),
-    new Paragraph({ children: [new TextRun({ text: 'Denetim Ekip Başkanı', bold: true, size: 20 })] }),
-    new Paragraph({ children: [new TextRun({ text: ekipBaskani, size: 20 })] }),
-    new Paragraph({ text: '' }),
-  ];
-
-  denetciler.forEach((d, i) => {
-    imzalar.push(new Paragraph({ children: [new TextRun({ text: `Denetçi ${i+1}`, bold: true, size: 20 })] }));
-    imzalar.push(new Paragraph({ children: [new TextRun({ text: d, size: 20 })] }));
-    imzalar.push(new Paragraph({ text: '' }));
-  });
-
-  imzalar.push(new Paragraph({ children: [new TextRun({ text: 'Denetlenen', bold: true, size: 20 })] }));
-  imzalar.push(new Paragraph({ children: [new TextRun({ text: denetlenen, size: 20 })] }));
-
-  const doc = new Document({
-    sections: [{ children: [
-      new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: 'T.C.', bold: true, size: 24 })] }),
-      new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: 'PENDİK KAYMAKAMLIĞI', bold: true, size: 24 })] }),
-      new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: 'İlçe Sağlık Müdürlüğü', size: 24 })] }),
-      new Paragraph({ text: '' }),
-      new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: 'DENETİM TUTANAĞI', bold: true, size: 28 })] }),
-      new Paragraph({ text: '' }),
-      new Paragraph({ children: [new TextRun({ text: `Tarih: ${tarihFormatted}`, size: 22 })] }),
-      new Paragraph({ children: [new TextRun({ text: `Konu: ${konu}`, size: 22 })] }),
-      new Paragraph({ text: '' }),
-      new Paragraph({ children: [new TextRun({ text: 'DENETİM NOTLARI:', bold: true, size: 22 })] }),
-      new Paragraph({ text: '' }),
-      ...notlarParagrafs,
-      ...imzalar,
-    ]}]
-  });
-  return await Packer.toBlob(doc);
-}
-
-async function saveToGoogleDrive() {
+// ── DOCX İNDİR ─────────────────────────────────
+async function kaydet() {
   const btn = document.getElementById('btn-save');
-  const status = document.getElementById('status-msg');
-  const notlar = document.getElementById('field-notlar').value;
+  const st  = document.getElementById('status');
+  const notlar = document.getElementById('f-notlar').value.trim();
 
-  if (!notlar.trim()) {
-    status.className = 'status-msg error';
-    status.textContent = '⚠️ Lütfen denetim notlarını girin.';
+  if (!notlar) {
+    st.className = 'status err';
+    st.textContent = '⚠️ Lütfen denetim notlarını girin.';
     return;
   }
 
   btn.disabled = true;
   btn.textContent = '⏳ Hazırlanıyor...';
-  status.className = 'status-msg';
+  st.className = 'status';
 
   try {
-    const tarih = document.getElementById('field-tarih').value;
-    const ekipBaskani = document.getElementById('field-ekipbaskani').value || 'Denetim';
-    const dateStr = (tarih || new Date().toISOString().slice(0,10)).replace(/-/g,'');
-    const baseName = `Tutanak_${dateStr}_${ekipBaskani.replace(/\s+/g,'_')}`;
+    await new Promise((res, rej) => {
+      if (window.docx) { res(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/docx@7.8.2/build/index.umd.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
 
-    // .docx indir
-    const docxBlob = await generateDocx();
-    const docxUrl = URL.createObjectURL(docxBlob);
+    const { Document, Paragraph, TextRun, AlignmentType, Packer } = docx;
+    const tarih      = document.getElementById('f-tarih').value || '';
+    const konu       = document.getElementById('f-konu').value || '';
+    const baskani    = document.getElementById('f-baskani').value || '';
+    const denetlenen = document.getElementById('f-denetlenen').value || '';
+    const denetciler = getDenetciler();
+    const tarihStr   = tarih ? new Date(tarih).toLocaleDateString('tr-TR') : '';
+
+    const p  = (text, opts={}) => new Paragraph({ children:[new TextRun({text, size:22, bold:opts.bold||false})] });
+    const pc = (text, opts={}) => new Paragraph({ alignment:AlignmentType.CENTER, children:[new TextRun({text, size:opts.size||22, bold:opts.bold||false})] });
+
+    const notlarRows = document.getElementById('f-notlar').value.split('\n').map(line => p(line));
+
+    const imzalar = [p(''), p(''), p(''),
+      p('Denetim Ekip Başkanı', {bold:true}), p(baskani), p('')
+    ];
+    denetciler.forEach((d,i) => {
+      imzalar.push(p(`Denetçi ${i+1}`, {bold:true}));
+      imzalar.push(p(d));
+      imzalar.push(p(''));
+    });
+    imzalar.push(p('Denetlenen', {bold:true}));
+    imzalar.push(p(denetlenen));
+
+    const doc = new Document({ sections:[{ children:[
+      pc('T.C.', {bold:true, size:24}),
+      pc('PENDİK KAYMAKAMLIĞI', {bold:true, size:24}),
+      pc('İlçe Sağlık Müdürlüğü', {size:24}),
+      p(''),
+      pc('DENETİM TUTANAĞI', {bold:true, size:28}),
+      p(''),
+      p(`Tarih: ${tarihStr}`),
+      p(`Konu: ${konu}`),
+      p(''),
+      p('DENETİM NOTLARI:', {bold:true}),
+      p(''),
+      ...notlarRows,
+      ...imzalar,
+    ]}]});
+
+    const blob = await Packer.toBlob(doc);
+    const dateStr  = (tarih||new Date().toISOString().slice(0,10)).replace(/-/g,'');
+    const baseName = `Tutanak_${dateStr}_${(baskani||'Denetim').replace(/\s+/g,'_')}`;
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = docxUrl;
-    a.download = `${baseName}.docx`;
-    a.click();
-    URL.revokeObjectURL(docxUrl);
+    a.href = url; a.download = `${baseName}.docx`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 
-    // Fotoğrafları tek tek indir
-    for (let i = 0; i < photos.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 500)); // kısa bekleme
-      const p = photos[i];
-      const ext = p.file.name.split('.').pop() || 'jpg';
-      const pUrl = URL.createObjectURL(p.file);
-      const pa = document.createElement('a');
-      pa.href = pUrl;
-      pa.download = `${baseName}_Foto${i+1}.${ext}`;
-      pa.click();
-      URL.revokeObjectURL(pUrl);
-    }
-
-    status.className = 'status-msg success';
-    status.textContent = `✅ "${baseName}.docx" indirildi!${photos.length > 0 ? ` + ${photos.length} fotoğraf` : ''}`;
+    st.className = 'status ok';
+    st.textContent = `✅ "${baseName}.docx" indirildi!`;
 
     setTimeout(() => {
       if (confirm('Yeni tutanak oluşturmak ister misiniz?')) {
-        ['field-konu','field-notlar','field-ekipbaskani','field-denetlenen'].forEach(id => document.getElementById(id).value = '');
-        document.querySelectorAll('#denetci-listesi input').forEach(i => i.value = '');
-        photos = []; renderPhotos();
-        document.getElementById('field-tarih').value = new Date().toISOString().split('T')[0];
-        status.className = 'status-msg';
+        ['f-konu','f-notlar','f-baskani','f-denetlenen'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+        document.querySelectorAll('#denetci-list input').forEach(i=>i.value='');
+        document.getElementById('f-tarih').value = new Date().toISOString().split('T')[0];
+        st.className = 'status';
       }
     }, 1500);
 
   } catch(err) {
     console.error(err);
-    status.className = 'status-msg error';
-    status.textContent = '❌ Hata: ' + (err.message || 'Bilinmeyen hata');
+    st.className = 'status err';
+    st.textContent = '❌ Hata: ' + err.message;
   }
+
   btn.disabled = false;
-  btn.innerHTML = "📥 Tutanağı İndir (.docx)";
+  btn.textContent = '📥 Tutanağı İndir (.docx)';
 }
 </script>
 </body>
