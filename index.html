@@ -170,7 +170,8 @@
 // ── CONFIG ─────────────────────────────────────
 const SHEET_ID  = '1LFAY1bP5DowgpFrblUhp4BgAqp90ZXOIAfMZ2a4WjII';
 const API_KEY   = 'AIzaSyDFYSrZUInMH-6mi8QgAcjo5rb9gl3VBmE';
-const SHEET_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A:C?key=${API_KEY}`;
+// CSV export URL - herkese açık sheets için en güvenilir yöntem
+const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 
 // ── Değişkenler ─────────────────────────────────
 let currentUser = null;
@@ -193,12 +194,14 @@ async function girisYap() {
   errEl.classList.remove('show');
 
   try {
-    const res = await fetch(SHEET_URL);
-    if (!res.ok) throw new Error('Tablo okunamadı.');
-    const data = await res.json();
-    const rows = data.values || [];
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('Tablo okunamadı. (HTTP ' + res.status + ')');
+    const csv = await res.text();
+    // CSV'yi satırlara ve sütunlara ayır
+    const rows = csv.trim().split('\n').map(row =>
+      row.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''))
+    );
 
-    // Başında 0 varsa karşılaştırma için normalize et
     const telNorm = tel.replace(/^0+/, '');
     const found = rows.slice(1).find(row => {
       const numara = (row[0]||'').toString().trim().replace(/\s/g,'').replace(/^0+/, '');
