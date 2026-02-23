@@ -98,8 +98,8 @@
   <div class="auth-sub">Sisteme erişmek için<br>kayıtlı telefon numaranızı girin.</div>
   <div class="auth-box">
     <label class="auth-label">Telefon Numarası</label>
-    <input class="auth-input" id="input-tel" type="tel" placeholder="05XXXXXXXXX" maxlength="11" inputmode="numeric">
-    <div class="auth-hint">Başında 0 ile 11 haneli giriniz</div>
+    <input class="auth-input" id="input-tel" type="tel" placeholder="5XXXXXXXXX" maxlength="10" inputmode="numeric">
+    <div class="auth-hint">Başında 0 olmadan 10 haneli giriniz</div>
     <button class="btn-giris" id="btn-giris" onclick="girisYap()">Giriş Yap</button>
     <div class="auth-error" id="auth-error"></div>
   </div>
@@ -184,7 +184,7 @@ async function girisYap() {
   const tel = document.getElementById('input-tel').value.trim().replace(/\s/g,'');
 
   if (!tel || tel.length < 10) {
-    gosterHata('Lütfen geçerli bir telefon numarası girin.');
+    gosterHata('Lütfen 10 haneli telefon numarası girin (başında 0 olmadan).');
     return;
   }
 
@@ -198,11 +198,12 @@ async function girisYap() {
     const data = await res.json();
     const rows = data.values || [];
 
-    // Başlık satırını atla (1. satır), numarayı ara
+    // Başında 0 varsa karşılaştırma için normalize et
+    const telNorm = tel.replace(/^0+/, '');
     const found = rows.slice(1).find(row => {
-      const numara = (row[0]||'').toString().trim().replace(/\s/g,'');
+      const numara = (row[0]||'').toString().trim().replace(/\s/g,'').replace(/^0+/, '');
       const yetki  = (row[2]||'').toString().trim().toLowerCase();
-      return numara === tel && yetki === 'aktif';
+      return numara === telNorm && yetki === 'aktif';
     });
 
     if (found) {
