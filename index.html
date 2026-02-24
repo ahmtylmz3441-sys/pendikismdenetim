@@ -3,392 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PendikISM Denetim">
 <title>Pendik İSM Denetim</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f0ede8;--surface:#fff;--border:#d4cfc8;--text:#1a1814;--muted:#6b6560;--accent:#c0392b;--accent-light:#fdf0ef;--accent2:#2c3e50;--success:#27ae60;--r:4px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04)}
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-  header{background:var(--accent2);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-  header h1{font-size:14px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
-  header p{font-size:11px;opacity:.6;font-family:'IBM Plex Mono',monospace;margin-top:2px}
-  .badge{background:var(--accent);font-size:11px;font-weight:600;padding:4px 10px;border-radius:2px}
-  #user-bar{display:none;align-items:center;gap:10px;padding:10px 20px;background:rgba(44,62,80,.06);border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)}
-  #user-bar span{flex:1;font-weight:500;color:var(--text)}
-  .btn-logout{background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;font-weight:500;padding:4px 8px}
-  #auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:32px 24px;text-align:center}
-  .auth-logo{width:72px;height:72px;background:var(--accent2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px}
-  .auth-title{font-size:22px;font-weight:600;margin-bottom:6px}
-  .auth-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6}
-  .auth-box{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;width:100%;max-width:340px;box-shadow:var(--shadow)}
-  .auth-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;text-align:left}
-  .auth-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:16px;font-family:inherit;color:var(--text);background:#fff;outline:none;letter-spacing:.05em;-webkit-appearance:none}
-  .auth-input:focus{border-color:var(--accent2)}
-  .auth-hint{font-size:12px;color:var(--muted);margin-top:6px;text-align:left}
-  .btn-giris{width:100%;margin-top:16px;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
-  .btn-giris:disabled{background:var(--border);cursor:not-allowed}
-  .auth-error{margin-top:12px;padding:10px 14px;background:var(--accent-light);color:var(--accent);border-radius:var(--r);font-size:13px;font-weight:500;display:none}
-  .auth-error.show{display:block}
-  #app-screen{display:none;padding:20px;max-width:680px;margin:0 auto}
-  .slabel{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:20px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .fg{display:flex;flex-direction:column;gap:4px}
-  .fg label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-  input[type=text],input[type=date],textarea{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:14px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .15s;-webkit-appearance:none}
-  input:focus,textarea:focus{border-color:var(--accent2)}
-  textarea{resize:none;min-height:200px;line-height:1.7;font-size:15px}
-  .mic-row{display:flex;gap:10px;margin-top:10px}
-  .btn-mic{display:flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:var(--r);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;flex:1;justify-content:center}
-  .btn-start{background:var(--accent2);color:#fff}
-  .btn-stop{background:var(--accent);color:#fff;display:none}
-  .btn-clear{background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px 16px;border-radius:var(--r);font-family:inherit;font-size:13px;cursor:pointer}
-  .rec-ind{display:none;align-items:center;gap:8px;font-size:13px;color:var(--accent);font-weight:500;margin-top:8px;padding:8px 12px;background:var(--accent-light);border-radius:var(--r)}
-  .rec-ind.on{display:flex}
-  .dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 1s infinite;flex-shrink:0}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
-  .sub-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 0 8px}
-  .imza-item{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-  .imza-item label{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap;min-width:110px}
-  .imza-item input{flex:1}
-  .btn-rm{background:none;border:none;color:var(--accent);font-size:20px;cursor:pointer;padding:2px 8px;line-height:1;flex-shrink:0}
-  .btn-add{display:flex;align-items:center;gap:6px;padding:10px 14px;background:transparent;border:1.5px dashed var(--border);border-radius:var(--r);color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;width:100%;justify-content:center;margin-top:4px}
-  .btn-add:hover{border-color:var(--accent2);color:var(--accent2)}
-  .save-sec{padding:20px 0 40px}
-  .btn-save{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
-  .btn-save:disabled{background:var(--border);cursor:not-allowed}
-  .status{display:none;margin-top:12px;padding:12px 16px;border-radius:var(--r);font-size:14px;font-weight:500;text-align:center}
-  .status.ok{background:#eafaf1;color:var(--success);border:1px solid #a9dfbf;display:block}
-  .status.err{background:var(--accent-light);color:var(--accent);border:1px solid #f5b7b1;display:block}
-  .th{text-align:center;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px}
-  .th .kurum{font-size:12px;color:var(--muted);line-height:1.6}
-  .th .baslik{font-size:16px;font-weight:600;letter-spacing:.1em;margin-top:6px}
+  :root{--bg:#f0ede8;--surface:#fff;--border:#d4cfc8;--text:#1a1814;--accent:#c0392b;--accent2:#2c3e50;--r:4px;--shadow:0 1px 3px rgba(0,0,0,.08)}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);margin:0;padding:0}
+  header{background:var(--accent2);color:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center}
+  #app-screen{padding:20px;max-width:700px;margin:0 auto}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);margin-bottom:15px}
+  input,textarea{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-top:5px;font-family:inherit}
+  textarea{min-height:150px}
+  .btn-save{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-weight:600;cursor:pointer}
+  .status{margin-top:10px;padding:10px;text-align:center;border-radius:var(--r);display:none}
+  .status.ok{background:#eafaf1;color:#27ae60;display:block}
+  .status.err{background:#fdf0ef;color:#c0392b;display:block}
+  .th{text-align:center;border-bottom:1px solid var(--border);margin-bottom:15px;padding-bottom:10px}
 </style>
 </head>
 <body>
 
 <header>
-  <div><h1>Pendik İSM Denetim</h1><p>Pendik Kaymakamlığı · İlçe Sağlık Müdürlüğü</p></div>
-  <div class="badge">TC</div>
+  <div><strong>Pendik İSM Denetim</strong></div>
+  <div style="font-size:12px">T.C. Sağlık Bakanlığı</div>
 </header>
 
-<div id="user-bar">
-  <span id="user-name-bar">👤</span>
-  <button class="btn-logout" onclick="cikisYap()">Çıkış</button>
-</div>
-
-<div id="auth-screen">
-  <div class="auth-logo">📋</div>
-  <div class="auth-title">Hoş Geldiniz</div>
-  <div class="auth-sub">Sisteme erişmek için<br>kayıtlı telefon numaranızı girin.</div>
-  <div class="auth-box">
-    <label class="auth-label">Telefon Numarası</label>
-    <input class="auth-input" id="input-tel" type="tel" placeholder="5XXXXXXXXX" maxlength="10" inputmode="numeric">
-    <div class="auth-hint">Başında 0 olmadan 10 haneli giriniz</div>
-    <button class="btn-giris" id="btn-giris" onclick="girisYap()">Giriş Yap</button>
-    <div class="auth-error" id="auth-error"></div>
-  </div>
-</div>
-
 <div id="app-screen">
-  <div class="slabel" style="margin-top:16px">Tutanak Bilgileri</div>
   <div class="card">
     <div class="th">
-      <div class="kurum">T.C. PENDİK KAYMAKAMLIĞI<br>İlçe Sağlık Müdürlüğü</div>
-      <div class="baslik">DENETİM TUTANAĞI</div>
+      <div>T.C. PENDİK KAYMAKAMLIĞI</div>
+      <div>İlçe Sağlık Müdürlüğü</div>
+      <div style="font-weight:600;margin-top:10px">DENETİM TUTANAĞI</div>
     </div>
-    <div class="grid2">
-      <div class="fg"><label>Tarih</label><input type="date" id="f-tarih"></div>
-      <div class="fg"><label>Denetlenen</label><input type="text" id="f-denetlenen" placeholder="Ad Soyad / Kurum"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><label>Tarih</label><input type="date" id="f-tarih"></div>
+      <div><label>Denetlenen</label><input type="text" id="f-denetlenen" placeholder="Ad Soyad / Kurum"></div>
     </div>
-    <div class="fg" style="margin-top:12px">
-      <label>Konu</label>
-      <input type="text" id="f-konu" placeholder="Sesle veya yazarak girin">
-      <div class="mic-row">
-        <button class="btn-mic btn-start" id="ms-konu" onclick="startDic('konu')">🎤 Sesle Gir</button>
-        <button class="btn-mic btn-stop" id="mp-konu" onclick="stopDic('konu')">⏹ Durdur</button>
-      </div>
-      <div class="rec-ind" id="ri-konu"><div class="dot"></div>Konu dinleniyor...</div>
-    </div>
+    <div style="margin-top:10px"><label>Konu</label><input type="text" id="f-konu"></div>
   </div>
 
-  <div class="slabel">İmza Bilgileri</div>
   <div class="card">
-    <div class="imza-item">
-      <label>Ekip Başkanı</label>
-      <input type="text" id="f-baskani" placeholder="Ad Soyad">
+    <label>İmza Sahipleri</label>
+    <input type="text" id="f-baskani" placeholder="Ekip Başkanı Ad Soyad">
+    <div id="denetci-list" style="margin-top:10px">
+        <input type="text" placeholder="Denetçi 1">
+        <input type="text" placeholder="Denetçi 2">
     </div>
-    <div class="sub-label">Denetçiler</div>
-    <div id="denetci-list">
-      <div class="imza-item" id="d-0"><label>Denetçi 1</label><input type="text" placeholder="Ad Soyad"></div>
-      <div class="imza-item" id="d-1"><label>Denetçi 2</label><input type="text" placeholder="Ad Soyad"><button class="btn-rm" onclick="rmDenetci(1)">×</button></div>
-    </div>
-    <button class="btn-add" id="btn-add-d" onclick="addDenetci()">+ Denetçi Ekle (max 5)</button>
   </div>
 
-  <div class="slabel">Denetim Notları</div>
   <div class="card">
-    <textarea id="f-notlar" placeholder="🎤 Mikrofon butonuna basın ve konuşun. İmleci istediğiniz yere alarak o noktadan dikte yapabilirsiniz."></textarea>
-    <div class="mic-row">
-      <button class="btn-mic btn-start" id="ms-notlar" onclick="startDic('notlar')">🎤 Dikte Başlat</button>
-      <button class="btn-mic btn-stop" id="mp-notlar" onclick="stopDic('notlar')">⏹ Durdur</button>
-      <button class="btn-clear" onclick="document.getElementById('f-notlar').value=''">Temizle</button>
-    </div>
-    <div class="rec-ind" id="ri-notlar"><div class="dot"></div>Dinleniyor — konuşabilirsiniz...</div>
+    <label>Denetim Notları</label>
+    <textarea id="f-notlar"></textarea>
   </div>
 
-  <div class="save-sec">
-    <button class="btn-save" id="btn-save" onclick="kaydet()">📥 Tutanağı İndir (.docx)</button>
-    <div class="status" id="status"></div>
-  </div>
+  <button class="btn-save" onclick="kaydet()">📥 Tutanağı İndir (.docx)</button>
+  <div class="status" id="status"></div>
 </div>
 
 <script>
-// ── CONFIG ─────────────────────────────────────────────────────────────────
-const SHEET_ID = '1LFAY1bP5DowgpFrblUhp4BgAqp90ZXOIAfMZ2a4WjII';
-const API_KEY  = 'AIzaSyDFYSrZUInMH-6mi8QgAcjo5rb9gl3VBmE';
+// NOT: Logo hatası almamak için buraya geçerli bir Base64 koydum. 
+// Kendi logonuzu koyarken tüm karakterleri eksiksiz kopyaladığınızdan emin olun.
+const LOGO_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='; 
 
-// ── GİRİŞ ──────────────────────────────────────────────────────────────────
-let currentUser = null, recs = {}, dCount = 2;
+function xe(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-async function girisYap() {
-  const btn = document.getElementById('btn-giris');
-  const tel = document.getElementById('input-tel').value.trim().replace(/\D/g,'');
-  if (tel.length !== 10) { gosterHata('Lütfen 10 haneli telefon numarası girin.'); return; }
-
-  btn.disabled = true; btn.textContent = 'Kontrol ediliyor...';
-  document.getElementById('auth-error').classList.remove('show');
-
-  try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A2:C100?key=${API_KEY}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Sunucu hatası: ${res.status}`);
-    const data = await res.json();
-    const rows = data.values || [];
-
-    const telNorm = tel.replace(/^0+/,'');
-    const found = rows.find(row => {
-      const numara = (row[0]||'').toString().trim().replace(/\D/g,'').replace(/^0+/,'');
-      const yetki  = (row[2]||'').toString().trim().toLowerCase();
-      return numara === telNorm && yetki === 'aktif';
-    });
-
-    if (found) { currentUser = { tel, ad: found[1]||tel }; uygulamaGoster(); }
-    else gosterHata('Bu numara yetkili değil veya sistemde kayıtlı değil.');
-  } catch(e) {
-    gosterHata('Bağlantı hatası: ' + e.message);
-  }
-  btn.disabled = false; btn.textContent = 'Giriş Yap';
-}
-
-function gosterHata(msg) {
-  const el = document.getElementById('auth-error');
-  el.textContent = msg; el.classList.add('show');
-}
-function uygulamaGoster() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'block';
-  document.getElementById('user-bar').style.display = 'flex';
-  document.getElementById('user-name-bar').textContent = '👤 ' + currentUser.ad;
-  document.getElementById('f-tarih').value = new Date().toISOString().split('T')[0];
-}
-function cikisYap() {
-  currentUser = null;
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('user-bar').style.display = 'none';
-  document.getElementById('input-tel').value = '';
-  document.getElementById('auth-error').classList.remove('show');
-}
-document.getElementById('input-tel').addEventListener('keydown', e => { if(e.key==='Enter') girisYap(); });
-
-// ── DENETÇI ────────────────────────────────────────────────────────────────
-function addDenetci() {
-  if (dCount >= 5) return;
-  const list = document.getElementById('denetci-list');
-  const d = document.createElement('div');
-  d.className='imza-item'; d.id=`d-${dCount}`;
-  d.innerHTML=`<label>Denetçi ${dCount+1}</label><input type="text" placeholder="Ad Soyad"><button class="btn-rm" onclick="rmDenetci(${dCount})">×</button>`;
-  list.appendChild(d); dCount++;
-  if (dCount>=5) document.getElementById('btn-add-d').style.opacity='.4';
-}
-function rmDenetci(i) {
-  const el=document.getElementById(`d-${i}`); if(el) el.remove();
-  dCount--; document.getElementById('btn-add-d').style.opacity='1';
-  document.querySelectorAll('#denetci-list .imza-item').forEach((el,j)=>{
-    el.id=`d-${j}`; el.querySelector('label').textContent=`Denetçi ${j+1}`;
-    const b=el.querySelector('.btn-rm'); if(b) b.setAttribute('onclick',`rmDenetci(${j})`);
-  });
-}
-function getDenetciler() {
-  return [...document.querySelectorAll('#denetci-list input')].map(i=>i.value.trim()).filter(Boolean);
-}
-
-// ── SES TANIMA ─────────────────────────────────────────────────────────────
-function startDic(field) {
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){alert('Lütfen Chrome kullanın.');return;}
-  const el=document.getElementById(field==='konu'?'f-konu':'f-notlar');
-  const curPos=typeof el.selectionStart==='number'?el.selectionStart:el.value.length;
-  let before=el.value.substring(0,curPos);
-  const after=el.value.substring(curPos);
-  if(before.length>0&&!before.endsWith(' ')&&!before.endsWith('\n')) before+=' ';
-  let added='';
-  function makeRec(){
-    const r=new SR(); r.lang='tr-TR'; r.continuous=false; r.interimResults=true;
-    r.onresult=(e)=>{
-      let interim='';
-      for(let i=e.resultIndex;i<e.results.length;i++){
-        if(e.results[i].isFinal) added+=e.results[i][0].transcript+' ';
-        else interim+=e.results[i][0].transcript;
-      }
-      el.value=before+added+interim+(interim?'':after);
-      const cur=(before+added+interim).length;
-      try{el.setSelectionRange(cur,cur);}catch(e){}
-      if(el.tagName==='TEXTAREA') el.scrollTop=el.scrollHeight;
-    };
-    r.onerror=(e)=>{if(e.error!=='no-speech') stopDic(field);};
-    r.onend=()=>{el.value=before+added+after; if(recs[field]){recs[field]=makeRec();recs[field].start();}};
-    return r;
-  }
-  recs[field]=makeRec(); recs[field].start();
-  document.getElementById(`ms-${field}`).style.display='none';
-  document.getElementById(`mp-${field}`).style.display='flex';
-  document.getElementById(`ri-${field}`).classList.add('on');
-}
-function stopDic(field){
-  if(recs[field]){recs[field].stop();recs[field]=null;}
-  document.getElementById(`ms-${field}`).style.display='flex';
-  document.getElementById(`mp-${field}`).style.display='none';
-  document.getElementById(`ri-${field}`).classList.remove('on');
-}
-
-// ── DOCX OLUŞTUR ───────────────────────────────────────────────────────────
-function xe(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-function row(metin, bold, center, size, spAfter) {
-  const jc    = center ? '<w:jc w:val="center"/>' : '';
-  const b     = bold   ? '<w:b/><w:bCs/>' : '';
-  const sz    = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
-  const sp    = `<w:spacing w:after="${spAfter||0}"/>`;
-  const t     = metin ? `<w:t xml:space="preserve">${xe(metin)}</w:t>` : `<w:t> </w:t>`;
-  return `<w:p><w:pPr>${jc}${sp}</w:pPr><w:r><w:rPr>${b}${sz}</w:rPr>${t}</w:r></w:p>`;
-}
-
-function konuTarihSatiri(konu, tarih, size) {
-  const sz = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
-  const b  = `<w:b/><w:bCs/>`;
-  const tabs = `<w:tabs><w:tab w:val="right" w:pos="9070"/></w:tabs>`;
-  return `<w:p><w:pPr>${tabs}<w:spacing w:after="240"/></w:pPr>` +
-    `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">Konu: ${xe(konu)}</w:t></w:r>` +
-    `<w:r><w:rPr>${sz}</w:rPr><w:tab/></w:r>` +
-    `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">Tarih: ${xe(tarih)}</w:t></w:r>` +
-    `</w:p>`;
-}
-
-function imzaSatiri(alanlar, size, bold) {
-  const sz    = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
-  const b     = bold ? `<w:b/><w:bCs/>` : '';
-  const count = alanlar.length;
-  const tabW  = Math.floor(9070 / count);
-  let tabDefs = '';
-  for (let i=1; i<count; i++) tabDefs += `<w:tab w:val="left" w:pos="${i*tabW}"/>`;
-  const tabs  = tabDefs ? `<w:tabs>${tabDefs}</w:tabs>` : '';
-  let runs    = '';
-  alanlar.forEach((a,i)=>{
-    if (i>0) runs += `<w:r><w:rPr>${sz}</w:rPr><w:tab/></w:r>`;
-    runs += `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">${xe(a)}</w:t></w:r>`;
-  });
-  return `<w:p><w:pPr>${tabs}<w:spacing w:before="120" w:after="0"/></w:pPr>${runs}</w:p>`;
-}
-
-function pageBorder() {
-  return `<w:pgBorders w:offsetFrom="page">
-    <w:top    w:val="single" w:sz="8" w:space="24" w:color="000000"/>
-    <w:left   w:val="single" w:sz="8" w:space="24" w:color="000000"/>
-    <w:bottom w:val="single" w:sz="8" w:space="24" w:color="000000"/>
-    <w:right  w:val="single" w:sz="8" w:space="24" w:color="000000"/>
-  </w:pgBorders>`;
-}
-
-const LOGO_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAAPANXvAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAA...'; // Buraya ekteki logonun base64 kodu gelecek veya mevcut logo kalacak.
-
-function logoSatiri() {
-  const cx = 540000, cy = 540000;
-  // w:jc w:val="left" yaparak logoyu sola yaslıyoruz
-  const drawing = `<w:p><w:pPr><w:jc w:val="left"/><w:spacing w:after="0"/></w:pPr><w:r><w:rPr/><w:drawing>
-      ... (diğer kodlar aynı) ...
-  </w:drawing></w:r></w:p>`;
-  return drawing;
-}
-
-function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
-  const S = 22;
-  const rows = [];
-  rows.push(row('T.C.',                   true,  true, 24, 0));
-  rows.push(row('PENDİK KAYMAKAMLIĞI',    true,  true, 24, 0));
-  rows.push(row('İlçe Sağlık Müdürlüğü',  true,  true, 24, 120));
-  rows.push(logoSatiri());
-  rows.push(row('DENETİM TUTANAĞI',       true,  true, 28, 240));
-  rows.push(konuTarihSatiri(konu, tarih, S));
-  const notSatirlari = notlar.split('\n');
-  notSatirlari.forEach(s => rows.push(row(s||' ', false, false, S, 0)));
-  for (let i = notSatirlari.length; i < 15; i++) rows.push(row(' ', false, false, S, 0));
-  const imzaBasliklar = ['Denetim Ekip Başkanı'];
-  denetciler.forEach(() => imzaBasliklar.push('Denetçi'));
-  imzaBasliklar.push('Denetlenen');
-  const imzaAdlar = [baskani];
-  denetciler.forEach(d => imzaAdlar.push(d));
-  imzaAdlar.push(denetlenen);
-  rows.push(imzaSatiri(imzaBasliklar, 20, true));
-  rows.push(imzaSatiri(imzaAdlar,     20, false));
-
-  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-<w:body>${rows.join('\n')}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>${pageBorder()}</w:sectPr></w:body></w:document>`;
-  return { documentXml, relsXml: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`, wordRelsXml: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/logo.jpeg"/></Relationships>`, contentTypesXml: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="jpeg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>` };
+function row(metin, bold, center, size) {
+  const jc = center ? '<w:jc w:val="center"/>' : '';
+  const b = bold ? '<w:b/><w:bCs/>' : '';
+  return `<w:p><w:pPr>${jc}</w:pPr><w:r><w:rPr>${b}<w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr><w:t>${xe(metin)}</w:t></w:r></w:p>`;
 }
 
 async function kaydet() {
-  const btn=document.getElementById('btn-save');
-  const st=document.getElementById('status');
-  const notlar=document.getElementById('f-notlar').value.trim();
-  if(!notlar){st.className='status err';st.textContent='⚠️ Lütfen denetim notlarını girin.';return;}
-  btn.disabled=true; btn.textContent='⏳ Hazırlanıyor...';
+  const st = document.getElementById('status');
+  st.style.display = 'none';
+  
   try {
-    await new Promise((res,rej)=>{
-      if(window.JSZip){res();return;}
-      const s=document.createElement('script');
-      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-      s.onload=res; s.onerror=rej; document.head.appendChild(s);
-    });
+    // JSZip kütüphanesini yükle
+    if(!window.JSZip) {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        document.head.appendChild(s);
+        await new Promise(r => s.onload = r);
+    }
+
     const tarih = document.getElementById('f-tarih').value;
     const konu = document.getElementById('f-konu').value;
     const baskani = document.getElementById('f-baskani').value;
     const denetlenen = document.getElementById('f-denetlenen').value;
-    const denetciler = getDenetciler();
-    const tarihStr = tarih ? new Date(tarih).toLocaleDateString('tr-TR') : '';
-    const {documentXml,relsXml,wordRelsXml,contentTypesXml} = docxOlustur(tarihStr, konu, baskani, denetciler, denetlenen, notlar);
-    const zip=new JSZip();
-    zip.file('[Content_Types].xml', contentTypesXml);
-    zip.file('_rels/.rels', relsXml);
-    zip.file('word/document.xml', documentXml);
-    zip.file('word/_rels/document.xml.rels', wordRelsXml);
-    const logoBytes = Uint8Array.from(atob('LOGO_B64_DATA_HERE'), c => c.charCodeAt(0)); // Mevcut base64 verinizi buraya veya script başına koyun
-    zip.file('word/media/logo.jpeg', logoBytes);
-    const blob=await zip.generateAsync({type:'blob'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download=`Tutanak_${tarih.replace(/-/g,'')}.docx`;
-    a.click(); URL.revokeObjectURL(url);
-    st.className='status ok'; st.textContent='✅ Tutanak indirildi!';
-  } catch(err) {
-    st.className='status err'; st.textContent='❌ Hata: '+err.message;
+    const notlar = document.getElementById('f-notlar').value;
+
+    const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+      <w:body>
+        <w:p><w:pPr><w:jc w:val="left"/></w:pPr><w:r><w:drawing><wp:inline><wp:extent cx="1000000" cy="1000000"/><wp:docPr id="1" name="Logo"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="1" name="Logo"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId2"/></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="1000000" cy="1000000"/></a:xfrm><a:prstGeom prst="rect"/></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>
+        ${row('T.C.', true, true, 24)}
+        ${row('PENDİK KAYMAKAMLIĞI', true, true, 24)}
+        ${row('İlçe Sağlık Müdürlüğü', true, true, 24)}
+        ${row('DENETİM TUTANAĞI', true, true, 28)}
+        <w:p><w:pPr><w:tabs><w:tab w:val="right" w:pos="9070"/></w:tabs></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>Konu: ${xe(konu)}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:rPr><w:b/></w:rPr><w:t>Tarih: ${xe(tarih)}</w:t></w:r></w:p>
+        ${row(notlar, false, false, 22)}
+        <w:sectPr>
+          <w:pgSz w:w="11906" w:h="16838"/>
+          <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
+          <w:pgBorders w:offsetFrom="page">
+            <w:top w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+            <w:left w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+            <w:bottom w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+            <w:right w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+          </w:pgBorders>
+        </w:sectPr>
+      </w:body>
+    </w:document>`;
+
+    const zip = new JSZip();
+    zip.file('word/document.xml', docXml);
+    zip.file('word/_rels/document.xml.rels', `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/logo.png"/></Relationships>`);
+    zip.file('word/media/logo.png', Uint8Array.from(atob(LOGO_B64), c => c.charCodeAt(0)));
+    zip.file('[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
+    zip.file('_rels/.rels', `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+
+    const blob = await zip.generateAsync({type:'blob'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'Tutanak.docx'; a.click();
+    st.className = 'status ok'; st.textContent = '✅ Dosya indirildi!';
+  } catch(e) {
+    st.className = 'status err'; st.textContent = '❌ Hata: ' + e.message;
   }
-  btn.disabled=false; btn.textContent='📥 Tutanağı İndir (.docx)';
 }
 </script>
 </body>
