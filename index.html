@@ -148,23 +148,44 @@
 </div>
 
 <script>
-// ── YETKİLİ KULLANICILAR ───────────────────────────────────────────────────
-// Yeni kullanıcı eklemek için buraya satır ekle: { tel: '5XXXXXXXXX', ad: 'Ad Soyad' }
-const KULLANICILAR = [
-  { tel: '5453342151', ad: 'Kübra ÖZBABALIK' },
-  { tel: '5417472345', ad: 'Ahmet YILMAZ' },
-];
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const SHEET_ID = '1LFAY1bP5DowgpFrblUhp4BgAqp90ZXOIAfMZ2a4WjII';
+const API_KEY  = 'AIzaSyDFYSrZUInMH-6mi8QgAcjo5rb9gl3VBmE';
 
 // ── GİRİŞ ──────────────────────────────────────────────────────────────────
 let currentUser = null, recs = {}, dCount = 2;
 
-function girisYap() {
+async function girisYap() {
+  const btn = document.getElementById('btn-giris');
   const tel = document.getElementById('input-tel').value.trim().replace(/\D/g,'');
   if (tel.length !== 10) { gosterHata('Lütfen 10 haneli telefon numarası girin.'); return; }
-  const found = KULLANICILAR.find(k => k.tel === tel);
-  if (found) { currentUser = found; uygulamaGoster(); }
-  else gosterHata('Bu numara yetkili değil veya sistemde kayıtlı değil.');
+
+  btn.disabled = true; btn.textContent = 'Kontrol ediliyor...';
+  document.getElementById('auth-error').classList.remove('show');
+
+  try {
+    // Sheets API v4 JSON - CSV'den daha güvenilir
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A2:C21?key=${API_KEY}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Sunucu hatası: ${res.status}`);
+    const data = await res.json();
+    const rows = data.values || [];
+
+    const telNorm = tel.replace(/^0+/,'');
+    const found = rows.find(row => {
+      const numara = (row[0]||'').toString().trim().replace(/\D/g,'').replace(/^0+/,'');
+      const yetki  = (row[2]||'').toString().trim().toLowerCase();
+      return numara === telNorm && yetki === 'aktif';
+    });
+
+    if (found) { currentUser = { tel, ad: found[1]||tel }; uygulamaGoster(); }
+    else gosterHata('Bu numara yetkili değil veya sistemde kayıtlı değil.');
+  } catch(e) {
+    gosterHata('Bağlantı hatası: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = 'Giriş Yap';
 }
+
 function gosterHata(msg) {
   const el = document.getElementById('auth-error');
   el.textContent = msg; el.classList.add('show');
@@ -184,22 +205,22 @@ function cikisYap() {
   document.getElementById('input-tel').value = '';
   document.getElementById('auth-error').classList.remove('show');
 }
-document.getElementById('input-tel').addEventListener('keydown', e => { if (e.key==='Enter') girisYap(); });
+document.getElementById('input-tel').addEventListener('keydown', e => { if(e.key==='Enter') girisYap(); });
 
 // ── DENETÇI ────────────────────────────────────────────────────────────────
 function addDenetci() {
   if (dCount >= 5) return;
   const list = document.getElementById('denetci-list');
   const d = document.createElement('div');
-  d.className = 'imza-item'; d.id = `d-${dCount}`;
-  d.innerHTML = `<label>Denetçi ${dCount+1}</label><input type="text" placeholder="Ad Soyad"><button class="btn-rm" onclick="rmDenetci(${dCount})">×</button>`;
+  d.className='imza-item'; d.id=`d-${dCount}`;
+  d.innerHTML=`<label>Denetçi ${dCount+1}</label><input type="text" placeholder="Ad Soyad"><button class="btn-rm" onclick="rmDenetci(${dCount})">×</button>`;
   list.appendChild(d); dCount++;
-  if (dCount >= 5) document.getElementById('btn-add-d').style.opacity = '.4';
+  if (dCount>=5) document.getElementById('btn-add-d').style.opacity='.4';
 }
 function rmDenetci(i) {
-  const el = document.getElementById(`d-${i}`); if (el) el.remove();
-  dCount--; document.getElementById('btn-add-d').style.opacity = '1';
-  document.querySelectorAll('#denetci-list .imza-item').forEach((el,j) => {
+  const el=document.getElementById(`d-${i}`); if(el) el.remove();
+  dCount--; document.getElementById('btn-add-d').style.opacity='1';
+  document.querySelectorAll('#denetci-list .imza-item').forEach((el,j)=>{
     el.id=`d-${j}`; el.querySelector('label').textContent=`Denetçi ${j+1}`;
     const b=el.querySelector('.btn-rm'); if(b) b.setAttribute('onclick',`rmDenetci(${j})`);
   });
@@ -210,29 +231,29 @@ function getDenetciler() {
 
 // ── SES TANIMA ─────────────────────────────────────────────────────────────
 function startDic(field) {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { alert('Lütfen Chrome kullanın.'); return; }
-  const el = document.getElementById(field==='konu' ? 'f-konu' : 'f-notlar');
-  const curPos = typeof el.selectionStart==='number' ? el.selectionStart : el.value.length;
-  let before = el.value.substring(0, curPos);
-  const after = el.value.substring(curPos);
-  if (before.length>0 && !before.endsWith(' ') && !before.endsWith('\n')) before += ' ';
-  let added = '';
-  function makeRec() {
-    const r = new SR(); r.lang='tr-TR'; r.continuous=false; r.interimResults=true;
-    r.onresult = (e) => {
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Lütfen Chrome kullanın.');return;}
+  const el=document.getElementById(field==='konu'?'f-konu':'f-notlar');
+  const curPos=typeof el.selectionStart==='number'?el.selectionStart:el.value.length;
+  let before=el.value.substring(0,curPos);
+  const after=el.value.substring(curPos);
+  if(before.length>0&&!before.endsWith(' ')&&!before.endsWith('\n')) before+=' ';
+  let added='';
+  function makeRec(){
+    const r=new SR(); r.lang='tr-TR'; r.continuous=false; r.interimResults=true;
+    r.onresult=(e)=>{
       let interim='';
-      for (let i=e.resultIndex; i<e.results.length; i++) {
-        if (e.results[i].isFinal) added += e.results[i][0].transcript+' ';
-        else interim += e.results[i][0].transcript;
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal) added+=e.results[i][0].transcript+' ';
+        else interim+=e.results[i][0].transcript;
       }
-      el.value = before+added+interim+(interim?'':after);
+      el.value=before+added+interim+(interim?'':after);
       const cur=(before+added+interim).length;
       try{el.setSelectionRange(cur,cur);}catch(e){}
       if(el.tagName==='TEXTAREA') el.scrollTop=el.scrollHeight;
     };
-    r.onerror=(e)=>{ if(e.error!=='no-speech') stopDic(field); };
-    r.onend=()=>{ el.value=before+added+after; if(recs[field]){recs[field]=makeRec();recs[field].start();} };
+    r.onerror=(e)=>{if(e.error!=='no-speech') stopDic(field);};
+    r.onend=()=>{el.value=before+added+after; if(recs[field]){recs[field]=makeRec();recs[field].start();}};
     return r;
   }
   recs[field]=makeRec(); recs[field].start();
@@ -240,7 +261,7 @@ function startDic(field) {
   document.getElementById(`mp-${field}`).style.display='flex';
   document.getElementById(`ri-${field}`).classList.add('on');
 }
-function stopDic(field) {
+function stopDic(field){
   if(recs[field]){recs[field].stop();recs[field]=null;}
   document.getElementById(`ms-${field}`).style.display='flex';
   document.getElementById(`mp-${field}`).style.display='none';
@@ -248,93 +269,146 @@ function stopDic(field) {
 }
 
 // ── DOCX OLUŞTUR ───────────────────────────────────────────────────────────
-function xe(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function xe(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function satir(metin, bold, center, size) {
+// Basit paragraf
+function row(metin, bold, center, size, spAfter) {
   const jc    = center ? '<w:jc w:val="center"/>' : '';
   const b     = bold   ? '<w:b/><w:bCs/>' : '';
   const sz    = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
-  return `<w:p><w:pPr>${jc}<w:spacing w:after="0"/></w:pPr>` +
-         `<w:r><w:rPr>${b}${sz}</w:rPr>` +
-         `<w:t xml:space="preserve">${xe(metin)}</w:t></w:r></w:p>`;
+  const sp    = `<w:spacing w:after="${spAfter||0}"/>`;
+  const t     = metin ? `<w:t xml:space="preserve">${xe(metin)}</w:t>` : `<w:t> </w:t>`;
+  return `<w:p><w:pPr>${jc}${sp}</w:pPr><w:r><w:rPr>${b}${sz}</w:rPr>${t}</w:r></w:p>`;
 }
 
-// İmza satırı — her alan sabit genişlikte tab ile ayrılır
-function imzaSatiri(alanlar, size) {
-  // Tab durakları her sütun için 2268 twip (yaklaşık 4 cm)
-  const tabWidth = 2268;
+// Konu (sol) + Tarih (sağ) aynı satırda
+function konuTarihSatiri(konu, tarih, size) {
+  const sz = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
+  const b  = `<w:b/><w:bCs/>`;
+  // Tab durağı: sağa hizalanmış, sayfanın sonuna
+  const tabs = `<w:tabs><w:tab w:val="right" w:pos="9070"/></w:tabs>`;
+  return `<w:p><w:pPr>${tabs}<w:spacing w:after="0"/></w:pPr>` +
+    `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">Konu: ${xe(konu)}</w:t></w:r>` +
+    `<w:r><w:rPr>${sz}</w:rPr><w:tab/></w:r>` +
+    `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">Tarih: ${xe(tarih)}</w:t></w:r>` +
+    `</w:p>`;
+}
+
+// İmza satırı — eşit aralıklı tab durakları
+function imzaSatiri(alanlar, size, bold) {
+  const sz    = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
+  const b     = bold ? `<w:b/><w:bCs/>` : '';
+  const count = alanlar.length;
+  // Kullanılabilir genişlik: 9070 twip (A4 - kenar boşlukları)
+  const tabW  = Math.floor(9070 / count);
   let tabDefs = '';
-  alanlar.forEach((_,i) => {
-    if (i>0) tabDefs += `<w:tab w:val="left" w:pos="${i*tabWidth}"/>`;
-  });
-
-  const b   = `<w:b/><w:bCs/>`;
-  const sz  = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
-  let runs  = '';
-  alanlar.forEach((a, i) => {
+  for (let i=1; i<count; i++) tabDefs += `<w:tab w:val="left" w:pos="${i*tabW}"/>`;
+  const tabs  = tabDefs ? `<w:tabs>${tabDefs}</w:tabs>` : '';
+  let runs    = '';
+  alanlar.forEach((a,i)=>{
     if (i>0) runs += `<w:r><w:rPr>${sz}</w:rPr><w:tab/></w:r>`;
-    runs += `<w:r><w:rPr>${a.bold?b:''}${sz}</w:rPr><w:t xml:space="preserve">${xe(a.t)}</w:t></w:r>`;
+    runs += `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">${xe(a)}</w:t></w:r>`;
   });
-
-  const tabs = tabDefs ? `<w:tabs>${tabDefs}</w:tabs>` : '';
   return `<w:p><w:pPr>${tabs}<w:spacing w:after="0"/></w:pPr>${runs}</w:p>`;
 }
 
+// Sayfa çerçevesi (border)
+function pageBorder() {
+  return `<w:pgBorders w:offsetFrom="page">
+    <w:top    w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+    <w:left   w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+    <w:bottom w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+    <w:right  w:val="single" w:sz="12" w:space="24" w:color="000000"/>
+  </w:pgBorders>`;
+}
+
+const LOGO_B64 = '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';
+
+function logoSatiri() {
+  // 1.5cm x 1.5cm = 540000 EMU x 540000 EMU
+  const cx = 540000, cy = 540000;
+  const drawing = `<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="0"/></w:pPr><w:r><w:rPr/><w:drawing>
+      <wp:inline>
+      <wp:extent cx="${cx}" cy="${cy}"/>
+      <wp:docPr id="1" name="Logo"/>
+      <a:graphic>
+        <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+          <pic:pic>
+            <pic:nvPicPr><pic:cNvPr id="1" name="Logo"/><pic:cNvPicPr/></pic:nvPicPr>
+            <pic:blipFill>
+              <a:blip r:embed="rId2"/>
+              <a:stretch><a:fillRect/></a:stretch>
+            </pic:blipFill>
+            <pic:spPr>
+              <a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm>
+              <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+            </pic:spPr>
+          </pic:pic>
+        </a:graphicData>
+      </a:graphic>
+    </wp:inline>
+  </w:drawing></w:r></w:p>`;
+  return drawing;
+}
+
 function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
+  const S = 22; // 11pt = 22 half-points
   const rows = [];
 
-  // Başlık
-  rows.push(satir('T.C.',                  true,  true, 24));
-  rows.push(satir('PENDİK KAYMAKAMLIĞI',   true,  true, 24));
-  rows.push(satir('İlçe Sağlık Müdürlüğü', true, true, 24));
-  rows.push(satir('',                       false, false, 22));
+  // ── LOGO ───────────────────────────────────
+  rows.push(logoSatiri());
 
-  // "DENETİM TUTANAĞI" başlığı
-  rows.push(satir('DENETİM TUTANAĞI',      true,  true, 28));
-  rows.push(satir('',                       false, false, 22));
+  // ── BAŞLIK ─────────────────────────────────
+  rows.push(row('T.C.',                   true,  true, 24, 0));
+  rows.push(row('PENDİK KAYMAKAMLIĞI',    true,  true, 24, 0));
+  rows.push(row('İlçe Sağlık Müdürlüğü',  true,  true, 24, 0));
+  rows.push(row('',                        false, false, S,  0));
+  rows.push(row('DENETİM TUTANAĞI',       true,  true, 28, 0));
+  rows.push(row('',                        false, false, S,  0));
 
-  // Konu + Tarih aynı satırda (Konu solda, Tarih sağda)
-  // İki ayrı paragraf yerine tab ile
-  rows.push(imzaSatiri([
-    { t: `Konu: ${konu}`, bold: false },
-    { t: `Tarih: ${tarih}`, bold: false },
-  ], 22));
-  rows.push(satir('', false, false, 22));
-  rows.push(satir('', false, false, 22));
+  // Konu sol — Tarih SAĞ
+  rows.push(konuTarihSatiri(konu, tarih, S));
+  rows.push(row('', false, false, S, 0));
+  rows.push(row('', false, false, S, 0));
 
-  // Denetim notları
+  // ── DENETİM NOTLARI ─────────────────────────
   const notSatirlari = notlar.split('\n');
-  notSatirlari.forEach(s => rows.push(satir(s||' ', false, false, 22)));
+  notSatirlari.forEach(s => rows.push(row(s||' ', false, false, S, 0)));
 
-  // Sayfayı doldurmak için minimum satır
-  for (let i = notSatirlari.length; i < 18; i++) rows.push(satir(' ', false, false, 22));
+  // Kısa notlar için boş satır ekle (tek sayfa için min dolgu)
+  for (let i = notSatirlari.length; i < 20; i++) rows.push(row(' ', false, false, S, 0));
 
-  rows.push(satir('', false, false, 22));
-  rows.push(satir('', false, false, 22));
-  rows.push(satir('', false, false, 22));
+  rows.push(row('', false, false, S, 0));
+  rows.push(row('', false, false, S, 0));
 
-  // İmza başlıkları - yan yana
-  const basliklar = [{ t: 'Denetim Ekip Başkanı', bold: true }];
-  denetciler.forEach((_, i) => basliklar.push({ t: `Denetçi ${i+1}`, bold: true }));
-  basliklar.push({ t: 'Denetlenen', bold: true });
-  rows.push(imzaSatiri(basliklar, 20));
+  // ── İMZA SATIRI ─────────────────────────────
+  // Başlıklar: "Denetim Ekip Başkanı", "Denetçi", "Denetçi"... "Denetlenen"
+  const imzaBasliklar = ['Denetim Ekip Başkanı'];
+  denetciler.forEach(() => imzaBasliklar.push('Denetçi'));
+  imzaBasliklar.push('Denetlenen');
 
-  // İmza adları - yan yana
-  const adlar = [{ t: baskani, bold: false }];
-  denetciler.forEach(d => adlar.push({ t: d, bold: false }));
-  adlar.push({ t: denetlenen, bold: false });
-  rows.push(imzaSatiri(adlar, 20));
+  const imzaAdlar = [baskani];
+  denetciler.forEach(d => imzaAdlar.push(d));
+  imzaAdlar.push(denetlenen);
 
-  const body = rows.join('');
+  rows.push(imzaSatiri(imzaBasliklar, 20, true));
+  rows.push(imzaSatiri(imzaAdlar,     20, false));
 
+  // ── XML BELGE ───────────────────────────────
   const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+            xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+            xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+            xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+            xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
 <w:body>
+${rows.join('\n')}
 <w:sectPr>
   <w:pgSz w:w="11906" w:h="16838"/>
-  <w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720"/>
+  <w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720"
+           w:header="720" w:footer="720" w:gutter="0"/>
+  ${pageBorder()}
 </w:sectPr>
-${body}
 </w:body>
 </w:document>`;
 
@@ -345,12 +419,14 @@ ${body}
 
   const wordRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/logo.jpeg"/>
 </Relationships>`;
 
   const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 <Default Extension="xml" ContentType="application/xml"/>
+<Default Extension="jpeg" ContentType="image/jpeg"/>
 <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 </Types>`;
 
@@ -359,80 +435,76 @@ ${body}
 
 // ── İNDİR ─────────────────────────────────────────────────────────────────
 async function kaydet() {
-  const btn = document.getElementById('btn-save');
-  const st  = document.getElementById('status');
-  const notlar = document.getElementById('f-notlar').value.trim();
+  const btn=document.getElementById('btn-save');
+  const st=document.getElementById('status');
+  const notlar=document.getElementById('f-notlar').value.trim();
+  if(!notlar){st.className='status err';st.textContent='⚠️ Lütfen denetim notlarını girin.';return;}
 
-  if (!notlar) {
-    st.className = 'status err';
-    st.textContent = '⚠️ Lütfen denetim notlarını girin.';
-    return;
-  }
-
-  btn.disabled = true; btn.textContent = '⏳ Hazırlanıyor...'; st.className = 'status';
+  btn.disabled=true; btn.textContent='⏳ Hazırlanıyor...'; st.className='status';
 
   try {
-    // JSZip yükle
-    await new Promise((res, rej) => {
-      if (window.JSZip) { res(); return; }
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
+    await new Promise((res,rej)=>{
+      if(window.JSZip){res();return;}
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload=res; s.onerror=rej; document.head.appendChild(s);
     });
 
-    const tarih      = document.getElementById('f-tarih').value || '';
-    const konu       = document.getElementById('f-konu').value || '';
-    const baskani    = document.getElementById('f-baskani').value || '';
-    const denetlenen = document.getElementById('f-denetlenen').value || '';
+    const tarih      = document.getElementById('f-tarih').value||'';
+    const konu       = document.getElementById('f-konu').value||'';
+    const baskani    = document.getElementById('f-baskani').value||'';
+    const denetlenen = document.getElementById('f-denetlenen').value||'';
     const denetciler = getDenetciler();
     const tarihStr   = tarih ? new Date(tarih).toLocaleDateString('tr-TR') : '';
     const notlarTam  = document.getElementById('f-notlar').value;
 
-    const { documentXml, relsXml, wordRelsXml, contentTypesXml } =
+    const {documentXml,relsXml,wordRelsXml,contentTypesXml} =
       docxOlustur(tarihStr, konu, baskani, denetciler, denetlenen, notlarTam);
 
-    const zip = new JSZip();
+    const zip=new JSZip();
     zip.file('[Content_Types].xml', contentTypesXml);
     zip.file('_rels/.rels', relsXml);
     zip.file('word/document.xml', documentXml);
     zip.file('word/_rels/document.xml.rels', wordRelsXml);
 
-    const blob = await zip.generateAsync({
-      type: 'blob',
-      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    // Logo'yu base64'ten binary'ye çevir ve ekle
+    const logoB64 = LOGO_B64;
+    const logoBytes = Uint8Array.from(atob(logoB64), c => c.charCodeAt(0));
+    zip.file('word/media/logo.jpeg', logoBytes);
+
+    const blob=await zip.generateAsync({
+      type:'blob',
+      mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     });
 
-    const dateStr  = (tarih||new Date().toISOString().slice(0,10)).replace(/-/g,'');
-    const baseName = `Tutanak_${dateStr}_${(baskani||'Denetim').replace(/\s+/g,'_')}`;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const dateStr=(tarih||new Date().toISOString().slice(0,10)).replace(/-/g,'');
+    const baseName=`Tutanak_${dateStr}_${(baskani||'Denetim').replace(/\s+/g,'_')}`;
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
     a.href=url; a.download=`${baseName}.docx`;
     document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.removeChild(a); URL.revokeObjectURL(url);
 
-    st.className = 'status ok';
-    st.textContent = `✅ "${baseName}.docx" indirildi!`;
+    st.className='status ok';
+    st.textContent=`✅ "${baseName}.docx" indirildi!`;
 
-    setTimeout(() => {
-      if (confirm('Yeni tutanak oluşturmak ister misiniz?')) {
-        ['f-konu','f-notlar','f-baskani','f-denetlenen'].forEach(id => {
-          const el = document.getElementById(id); if(el) el.value='';
+    setTimeout(()=>{
+      if(confirm('Yeni tutanak oluşturmak ister misiniz?')){
+        ['f-konu','f-notlar','f-baskani','f-denetlenen'].forEach(id=>{
+          const el=document.getElementById(id); if(el) el.value='';
         });
         document.querySelectorAll('#denetci-list input').forEach(i=>i.value='');
-        document.getElementById('f-tarih').value = new Date().toISOString().split('T')[0];
-        st.className = 'status';
+        document.getElementById('f-tarih').value=new Date().toISOString().split('T')[0];
+        st.className='status';
       }
-    }, 1500);
+    },1500);
 
   } catch(err) {
     console.error(err);
-    st.className = 'status err';
-    st.textContent = '❌ Hata: ' + err.message;
+    st.className='status err';
+    st.textContent='❌ Hata: '+err.message;
   }
-
-  btn.disabled = false; btn.textContent = '📥 Tutanağı İndir (.docx)';
+  btn.disabled=false; btn.textContent='📥 Tutanağı İndir (.docx)';
 }
 </script>
 </body>
