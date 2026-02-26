@@ -393,14 +393,10 @@ function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
   const notSatirlari = notlar.split('\n');
   notSatirlari.forEach(s => rows.push(row(s||' ', false, false, S, 0)));
 
-  // Kısa notlar için boş satır ekle (tek sayfa için min dolgu)
+  // Kısa notlar için boş satır ekle (dolgu)
   for (let i = notSatirlari.length; i < 20; i++) rows.push(row(' ', false, false, S, 0));
 
-  rows.push(row('', false, false, S, 0));
-  rows.push(row('', false, false, S, 0));
-
-  // ── İMZA SATIRI ─────────────────────────────
-  // Başlıklar: "Denetim Ekip Başkanı", "Denetçi", "Denetçi"... "Denetlenen"
+  // ── İMZA SATIRI — sayfanın en altına sabitlenmiş ────
   const imzaBasliklar = ['Denetim Ekip Başkanı'];
   denetciler.forEach(() => imzaBasliklar.push('Denetçi'));
   imzaBasliklar.push('Denetlenen');
@@ -409,8 +405,29 @@ function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
   denetciler.forEach(d => imzaAdlar.push(d));
   imzaAdlar.push(denetlenen);
 
-  rows.push(imzaSatiri(imzaBasliklar, 20, true));
-  rows.push(imzaSatiri(imzaAdlar,     20, false));
+  // İmza satırlarını absolute frame ile sayfanın altına sabitle
+  // w:y: sayfanın altından ~1.5cm yukarı = 16838 (sayfa yüksekliği) - 720 (alt margin) - 800 (imza alanı yüksekliği) = 15318
+  const frameY = 15000;
+  const frameProps = `<w:framePr w:w="9070" w:hRule="auto" w:hSpace="0" w:vAnchor="page" w:hAnchor="margin" w:x="0" w:xAlign="left" w:y="${frameY}" w:wrap="none"/>`;
+
+  function imzaSatiriFrame(alanlar, size, bold) {
+    const sz    = `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>`;
+    const b     = bold ? `<w:b/><w:bCs/>` : '';
+    const count = alanlar.length;
+    const tabW  = Math.floor(9070 / count);
+    let tabDefs = '';
+    for (let i=1; i<count; i++) tabDefs += `<w:tab w:val="left" w:pos="${i*tabW}"/>`;
+    const tabs  = tabDefs ? `<w:tabs>${tabDefs}</w:tabs>` : '';
+    let runs    = '';
+    alanlar.forEach((a,i)=>{
+      if (i>0) runs += `<w:r><w:rPr>${sz}</w:rPr><w:tab/></w:r>`;
+      runs += `<w:r><w:rPr>${b}${sz}</w:rPr><w:t xml:space="preserve">${xe(a)}</w:t></w:r>`;
+    });
+    return `<w:p><w:pPr>${frameProps}${tabs}<w:spacing w:after="0"/></w:pPr>${runs}</w:p>`;
+  }
+
+  rows.push(imzaSatiriFrame(imzaBasliklar, 20, true));
+  rows.push(imzaSatiriFrame(imzaAdlar,     20, false));
 
   // ── XML BELGE ───────────────────────────────
   const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
