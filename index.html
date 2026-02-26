@@ -381,11 +381,48 @@ function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
   rows.push(row('PENDİK KAYMAKAMLIĞI',    true,  true, 24, 0));
   rows.push(row('İlçe Sağlık Müdürlüğü',  true,  true, 24, 0));
   rows.push(row('',                        false, false, S,  0));
-  rows.push(row('DENETİM TUTANAĞI',       true,  true, 28, 0));
-  rows.push(row('',                        false, false, S,  0));
 
-  // Konu sol — Tarih SAĞ
-  rows.push(konuTarihSatiri(konu, tarih, S));
+  // "DENETİM TUTANAĞI" sol+orta geniş sütun, "Tarih" sağda sabit sütun
+  // Toplam 9070 twip: başlık 6800, tarih 2270
+  const baslikSutunW = 6800;
+  const tarihSutunW  = 2270;
+  const szH = 28, szT = S;
+  const baslikTarihTablo = `<w:tbl>
+    <w:tblPr>
+      <w:tblW w:w="9070" w:type="dxa"/>
+      <w:tblBorders>
+        <w:top w:val="none" w:sz="0"/><w:left w:val="none" w:sz="0"/>
+        <w:bottom w:val="none" w:sz="0"/><w:right w:val="none" w:sz="0"/>
+        <w:insideH w:val="none" w:sz="0"/><w:insideV w:val="none" w:sz="0"/>
+      </w:tblBorders>
+      <w:tblLayout w:type="fixed"/>
+    </w:tblPr>
+    <w:tblGrid>
+      <w:gridCol w:w="${baslikSutunW}"/>
+      <w:gridCol w:w="${tarihSutunW}"/>
+    </w:tblGrid>
+    <w:tr>
+      <w:tc>
+        <w:tcPr><w:tcW w:w="${baslikSutunW}" w:type="dxa"/></w:tcPr>
+        <w:p><w:pPr><w:jc w:val="left"/><w:spacing w:after="0"/></w:pPr>
+          <w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${szH}"/><w:szCs w:val="${szH}"/></w:rPr>
+            <w:t>DENETİM TUTANAĞI</w:t></w:r>
+        </w:p>
+      </w:tc>
+      <w:tc>
+        <w:tcPr><w:tcW w:w="${tarihSutunW}" w:type="dxa"/></w:tcPr>
+        <w:p><w:pPr><w:jc w:val="right"/><w:spacing w:after="0"/></w:pPr>
+          <w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${szT}"/><w:szCs w:val="${szT}"/></w:rPr>
+            <w:t xml:space="preserve">Tarih: ${xe(tarih)}</w:t></w:r>
+        </w:p>
+      </w:tc>
+    </w:tr>
+  </w:tbl>`;
+  rows.push(baslikTarihTablo);
+  rows.push(row('', false, false, S, 0));
+
+  // Konu ayrı satırda, sadece sol
+  rows.push(row(`Konu: ${konu}`, true, false, S, 0));
   rows.push(row('', false, false, S, 0));
   rows.push(row('', false, false, S, 0));
 
