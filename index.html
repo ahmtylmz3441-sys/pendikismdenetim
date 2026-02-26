@@ -382,22 +382,21 @@ function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
   rows.push(row('İlçe Sağlık Müdürlüğü',  true,  true, 24, 0));
   rows.push(row('',                        false, false, S,  0));
 
-  // "DENETİM TUTANAĞI" ortada, "Tarih" sağda — tek paragrafta tab ile
-  // Tab: center=4535 (sayfa ortası), right=9070 (sağ kenar)
-  const baslikTarihSatiri = `<w:p>
+  // "DENETİM TUTANAĞI" tam ortalı ayrı paragraf
+  rows.push(row('DENETİM TUTANAĞI', true, true, 28, 0));
+
+  // "Tarih" sayfanın en sağında ayrı paragraf
+  const tarihSatiri = `<w:p>
     <w:pPr>
-      <w:tabs>
-        <w:tab w:val="center" w:pos="4535"/>
-        <w:tab w:val="right"  w:pos="9070"/>
-      </w:tabs>
+      <w:tabs><w:tab w:val="right" w:pos="9070"/></w:tabs>
       <w:spacing w:after="0"/>
     </w:pPr>
     <w:r><w:rPr><w:sz w:val="${S}"/><w:szCs w:val="${S}"/></w:rPr><w:tab/></w:r>
-    <w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="28"/><w:szCs w:val="28"/></w:rPr><w:t>DENETİM TUTANAĞI</w:t></w:r>
-    <w:r><w:rPr><w:sz w:val="${S}"/><w:szCs w:val="${S}"/></w:rPr><w:tab/></w:r>
-    <w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${S}"/><w:szCs w:val="${S}"/></w:rPr><w:t xml:space="preserve">Tarih: ${xe(tarih)}</w:t></w:r>
+    <w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${S}"/><w:szCs w:val="${S}"/></w:rPr>
+      <w:t xml:space="preserve">Tarih: ${xe(tarih)}</w:t>
+    </w:r>
   </w:p>`;
-  rows.push(baslikTarihSatiri);
+  rows.push(tarihSatiri);
   rows.push(row('', false, false, S, 0));
 
   // Konu ayrı satırda, sadece sol
