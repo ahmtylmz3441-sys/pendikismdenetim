@@ -404,7 +404,7 @@ function docxOlustur(tarih, konu, baskani, denetciler, denetlenen, notlar) {
     <w:tr>
       <w:tc>
         <w:tcPr><w:tcW w:w="${baslikSutunW}" w:type="dxa"/></w:tcPr>
-        <w:p><w:pPr><w:jc w:val="left"/><w:spacing w:after="0"/></w:pPr>
+        <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="0"/></w:pPr>
           <w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${szH}"/><w:szCs w:val="${szH}"/></w:rPr>
             <w:t>DENETİM TUTANAĞI</w:t></w:r>
         </w:p>
